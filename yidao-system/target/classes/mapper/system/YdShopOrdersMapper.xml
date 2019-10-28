@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdShopOrdersMapper">
+    <resultMap id="YdShopOrdersResult" type="YdShopOrders">
+        <id     property="id" column="id" />
+        <result property="userId" column="user_id"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="raId" column="ra_id"/>
+        <result property="receivingAddressCompleteInfo" column="receiving_address_complete_info"/>
+        <result property="orderFormNum" column="order_form_num"/>
+        <result property="distributionModeType" column="distribution_mode_type"/>
+        <result property="distributionModeShow" column="distribution_mode_show"/>
+        <result property="expectDistributionTime" column="expect_distribution_time"/>
+        <result property="invoiceType" column="invoice_type"/>
+        <result property="invoiceTypeShow" column="invoice_type_show"/>
+        <result property="invoicePayableType" column="invoice_payable_type"/>
+        <result property="invoicePayableTypeShow" column="invoice_payable_type_show"/>
+        <result property="invoiceReceiverPhone" column="invoice_receiver_phone"/>
+        <result property="invoiceReceiverEmail" column="invoice_receiver_email"/>
+        <result property="taxpayer" column="taxpayer"/>
+        <result property="taxpayerIdentificationNumber" column="taxpayer_identification_number"/>
+        <result property="invoiceContentType" column="invoice_content_type"/>
+        <result property="invoiceContentTypeShow" column="invoice_content_type_show"/>
+        <result property="totalPrice" column="total_price"/>
+        <result property="couponMoney" column="coupon_money"/>
+        <result property="voucherId" column="voucher_Id"/>
+        <result property="activityMoney" column="activity_money"/>
+        <result property="integralMoney" column="integral_money"/>
+        <result property="freightMoney" column="freight_money"/>
+        <result property="amountPayable" column="amount_payable"/>
+        <result property="placeOrderTime" column="place_order_time"/>
+        <result property="payWay" column="pay_way"/>
+        <result property="payWayShow" column="pay_way_show"/>
+        <result property="payTime" column="pay_time"/>
+        <result property="freightBillNo" column="freight_bill_no"/>
+        <result property="remark" column="remark"/>
+        <result property="ufaId" column="ufa_Id"/>
+        <result property="totalIntegral" column="total_Integral"/>
+        <result property="integralPayable" column="integral_Payable"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="other1" column="other1"/>
+        <result property="other2" column="other2"/>
+        <result property="userName" column="user_name"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="zipCode" column="zip_code"/>
+        <result property="receivingAddress" column="receiving_address"/>
+        <result property="consignee" column="consignee"/>
+        <result property="receivingTelephone" column="receiving_Telephone"/>
+    </resultMap>
+
+    <resultMap id="YdShopOrderProcessResult" type="YdShopOrderProcess">
+        <id     property="id" column="id" />
+        <result property="soId" column="so_Id"/>
+        <result property="content" column="content"/>
+        <result property="reason" column="reason"/>
+        <result property="orderStatus" column="order_Status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="other1" column="other1"/>
+        <result property="other2" column="other2"/>
+    </resultMap>
+
+    <select id="selectALl"  parameterType="long" resultMap="YdShopOrdersResult">
+        select u.name user_name,so.id,so.order_form_num,so.total_price,so.coupon_money,so.activity_money,so.integral_money,so.voucher_Id,
+                so.freight_money,so.amount_payable,so.pay_way,so.create_time,so.remark,sop.order_status
+        from yd_shop_order so
+        inner join yd_user u on so.user_id=u.id
+        inner join (select max(order_status) order_status,so_id from  yd_shop_order_process where `status`>-1 group by so_id) sop on sop.so_id=so.id
+        where so.`status`>-1 and u.`status`>-1 and so.shop_id=#{shopId} and sop.order_status != 7
+        order by so.create_time
+    </select>
+
+    <select id="selectByType" resultMap="YdShopOrdersResult">
+        select u.name user_name,so.id,so.order_form_num,so.total_price,so.coupon_money,so.activity_money,so.integral_money,so.voucher_Id,
+                so.freight_money,so.amount_payable,so.pay_way,so.create_time,so.remark,sop.order_status
+        from yd_shop_order so
+        inner join yd_user u on so.user_id=u.id
+        inner join (select max(order_status) order_status,so_id from  yd_shop_order_process where `status`>-1 group by so_id) sop on sop.so_id=so.id
+        where so.`status`>-1 and u.`status`>-1 and so.shop_id=#{shopId} and sop.order_status=#{type}
+        order by so.create_time
+    </select>
+
+    <update id="closeOrders" parameterType="long">
+        update yd_shop_order set status=-1 where id=#{id}
+    </update>
+    <insert id="insertOrderProcess" parameterType="YdShopOrderProcess" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_shop_order_process (so_id,content,reason,order_status) values(#{soId},#{content},#{reason},#{orderStatus})
+    </insert>
+
+    <delete id="removeOrders" parameterType="long">
+        delete from yd_shop_order where id=#{id}
+    </delete>
+
+    <delete id="removeOrdersProcess" parameterType="long">
+        delete from yd_shop_order_process where so_id=#{soId}
+    </delete>
+
+
+    <select id="selectOrderInfo" parameterType="long" resultMap="YdShopOrdersResult">
+        select u.name user_name,so.*,sop.order_status,sra.receiving_address,sra.zip_code,sra.consignee,sra.receiving_telephone
+        from yd_shop_order so
+        inner join yd_user u on so.user_id=u.id
+        inner join (select max(order_status) order_status,so_id from  yd_shop_order_process where `status`>-1 group by so_id) sop on sop.so_id=so.id
+		inner join yd_shop_receiving_address sra on so.ra_id=sra.id
+        where so.`status`>-1 and u.`status`>-1 and sra.`status`>-1 and so.id=#{orderId}
+    </select>
+
+    <update id="updateRemarkAndMoney" parameterType="YdShopOrders">
+        update yd_shop_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="remark         != null  and remark         != ''  ">remark          = #{remark},</if>
+            <if test="amountPayable  != null  and amountPayable  != ''  ">amount_payable  = #{amountPayable},</if>
+        </trim>
+        where id=#{id}
+    </update>
+
+    <select id="selectDeliverGoodsInfo" parameterType="long" resultMap="YdShopOrdersResult">
+        select so.order_form_num,so.distribution_mode_type,so.freight_bill_no,sra.consignee,sra.receiving_address,sra.receiving_telephone,sra.zip_code
+        from yd_shop_order so
+        inner join yd_shop_receiving_address sra on so.ra_id=sra.id
+        where so.`status`>-1 and sra.`status`>-1 and so.id=#{orderId}
+    </select>
+
+    <update id="updateOrderDelivery" parameterType="YdShopOrders">
+        update yd_shop_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="distributionModeType  != null  and distributionModeType  != ''  ">distribution_mode_type  = #{distributionModeType},</if>
+            <if test="distributionModeShow  != null  and distributionModeShow  != ''  ">distribution_mode_show  = #{distributionModeShow},</if>
+            <if test="freightBillNo         != null  and freightBillNo         != ''  ">freight_bill_no         = #{freightBillNo},</if>
+        </trim>
+        where id=#{id}
+    </update>
+
+    <delete id="refusalRefund" parameterType="long">
+        delete from yd_shop_order_process where id=#{id}
+    </delete>
+
+    <select id="selectSopMax" parameterType="long" resultType="long">
+        select id from yd_shop_order_process where so_id=#{id} and order_status= (select max(order_status) from yd_shop_order_process where so_id=#{id})
+    </select>
+
+    <insert id="insertOrder" parameterType="YdShopOrders" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_shop_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId             != null  and  userId            != ''  ">user_id                ,</if>
+            <if test="shopId             != null  and  shopId            != ''  ">shop_id                ,</if>
+            <if test="raId             != null  and  raId            != ''  ">ra_id                ,</if>
+            <if test="receivingAddressCompleteInfo             != null  and  receivingAddressCompleteInfo            != ''  ">receiving_address_complete_info                ,</if>
+            <if test="orderFormNum             != null  and  orderFormNum            != ''  ">order_form_num                ,</if>
+            <if test="distributionModeType             != null  and  distributionModeType            != ''  ">distribution_mode_type                ,</if>
+            <if test="distributionModeShow             != null  and  distributionModeShow            != ''  ">distribution_mode_show                ,</if>
+            <if test="expectDistributionTime             != null  and  expectDistributionTime            != ''  ">expect_distribution_time                ,</if>
+            <if test="invoiceType             != null  and  invoiceType            != ''  ">invoice_type                ,</if>
+            <if test="invoiceTypeShow             != null  and  invoiceTypeShow            != ''  ">invoice_type_show                ,</if>
+            <if test="invoicePayableType             != null  and  invoicePayableType            != ''  ">invoice_payable_type                ,</if>
+            <if test="invoicePayableTypeShow             != null  and  invoicePayableTypeShow            != ''  ">invoice_payable_type_show                ,</if>
+            <if test="invoiceReceiverPhone             != null  and  invoiceReceiverPhone            != ''  ">invoice_receiver_phone                ,</if>
+            <if test="invoiceReceiverEmail             != null  and  invoiceReceiverEmail            != ''  ">invoice_receiver_email                ,</if>
+            <if test="taxpayer             != null  and  taxpayer            != ''  ">taxpayer                ,</if>
+            <if test="taxpayerIdentificationNumber             != null  and  taxpayerIdentificationNumber            != ''  ">taxpayer_identification_number                ,</if>
+            <if test="invoiceContentType             != null  and  invoiceContentType            != ''  ">invoice_content_type                ,</if>
+            <if test="invoiceContentTypeShow             != null  and  invoiceContentTypeShow            != ''  ">invoice_content_type_show                ,</if>
+            <if test="totalPrice             != null  and  totalPrice            != ''  ">total_price                ,</if>
+            <if test="couponMoney             != null  and  couponMoney            != ''  ">coupon_money                ,</if>
+            <if test="voucherId             != null  and  voucherId            != ''  ">voucher_Id                ,</if>
+            <if test="activityMoney             != null  and  activityMoney            != ''  ">activity_money                ,</if>
+            <if test="integralMoney             != null  and  integralMoney            != ''  ">integral_money                ,</if>
+            <if test="freightMoney             != null  and  freightMoney            != ''  ">freight_money                ,</if>
+            <if test="amountPayable             != null  and  amountPayable            != ''  ">amount_payable                ,</if>
+            <if test="placeOrderTime             != null  and  placeOrderTime            != ''  ">place_order_time                ,</if>
+            <if test="payWay             != null  and  payWay            != ''  ">pay_way                ,</if>
+            <if test="payWayShow             != null  and  payWayShow            != ''  ">pay_way_show                ,</if>
+            <if test="payTime             != null  and  payTime            != ''  ">pay_time                ,</if>
+            <if test="freightBillNo             != null  and  freightBillNo            != ''  ">freight_bill_no                ,</if>
+            <if test="remark             != null  and  remark            != ''  ">remark     ,</if>
+            <if test="ufaId             != null  and  ufaId            != ''  ">ufa_Id     ,</if>
+            <if test="totalIntegral      != null  and  totalIntegral   != ''  ">total_integral    ,</if>
+            <if test="integralPayable    != null  and  integralPayable   != ''  ">integral_payable   ,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId            != null  and userId            != ''  ">#{userId},</if>
+            <if test="shopId            != null  and shopId            != ''  ">#{shopId},</if>
+            <if test="raId            != null  and raId            != ''  ">#{raId},</if>
+            <if test="receivingAddressCompleteInfo            != null  and receivingAddressCompleteInfo            != ''  ">#{receivingAddressCompleteInfo},</if>
+            <if test="orderFormNum            != null  and orderFormNum            != ''  ">#{orderFormNum},</if>
+            <if test="distributionModeType            != null  and distributionModeType            != ''  ">#{distributionModeType},</if>
+            <if test="distributionModeShow            != null  and distributionModeShow            != ''  ">#{distributionModeShow},</if>
+            <if test="expectDistributionTime            != null  and expectDistributionTime            != ''  ">#{expectDistributionTime},</if>
+            <if test="invoiceType            != null  and invoiceType            != ''  ">#{invoiceType},</if>
+            <if test="invoiceTypeShow            != null  and invoiceTypeShow            != ''  ">#{invoiceTypeShow},</if>
+            <if test="invoicePayableType            != null  and invoicePayableType            != ''  ">#{invoicePayableType},</if>
+            <if test="invoicePayableTypeShow            != null  and invoicePayableTypeShow            != ''  ">#{invoicePayableTypeShow},</if>
+            <if test="invoiceReceiverPhone            != null  and invoiceReceiverPhone            != ''  ">#{invoiceReceiverPhone},</if>
+            <if test="invoiceReceiverEmail            != null  and invoiceReceiverEmail            != ''  ">#{invoiceReceiverEmail},</if>
+            <if test="taxpayer            != null  and taxpayer            != ''  ">#{taxpayer},</if>
+            <if test="taxpayerIdentificationNumber            != null  and taxpayerIdentificationNumber            != ''  ">#{taxpayerIdentificationNumber},</if>
+            <if test="invoiceContentType            != null  and invoiceContentType            != ''  ">#{invoiceContentType},</if>
+            <if test="invoiceContentTypeShow            != null  and invoiceContentTypeShow            != ''  ">#{invoiceContentTypeShow},</if>
+            <if test="totalPrice            != null  and totalPrice            != ''  ">#{totalPrice},</if>
+            <if test="couponMoney            != null  and couponMoney            != ''  ">#{couponMoney},</if>
+            <if test="voucherId            != null  and voucherId            != ''  ">#{voucherId},</if>
+            <if test="activityMoney            != null  and activityMoney            != ''  ">#{activityMoney},</if>
+            <if test="integralMoney            != null  and integralMoney            != ''  ">#{integralMoney},</if>
+            <if test="freightMoney            != null  and freightMoney            != ''  ">#{freightMoney},</if>
+            <if test="amountPayable            != null  and amountPayable            != ''  ">#{amountPayable},</if>
+            <if test="placeOrderTime            != null  and placeOrderTime            != ''  ">#{placeOrderTime},</if>
+            <if test="payWay            != null  and payWay            != ''  ">#{payWay},</if>
+            <if test="payWayShow            != null  and payWayShow            != ''  ">#{payWayShow},</if>
+            <if test="payTime            != null  and payTime            != ''  ">#{payTime},</if>
+            <if test="freightBillNo            != null  and freightBillNo            != ''  ">#{freightBillNo},</if>
+            <if test="remark            != null  and remark            != ''  ">#{remark},</if>
+            <if test="ufaId            != null  and ufaId            != ''  ">#{ufaId},</if>
+            <if test="totalIntegral     != null  and totalIntegral    != ''  ">#{totalIntegral},</if>
+            <if test="integralPayable   != null  and integralPayable  != ''  ">#{integralPayable},</if>
+        </trim>
+    </insert>
+
+    <update id="updateUserRunningAccountId">
+        update yd_shop_order set ufa_id=#{userRunningAccountId} where id=#{orderId}
+    </update>
+
+    <select id="selectShopOrderById" parameterType="long" resultMap="YdShopOrdersResult">
+        select * from yd_shop_order where id = #{orderId}
+    </select>
+
+
+</mapper>

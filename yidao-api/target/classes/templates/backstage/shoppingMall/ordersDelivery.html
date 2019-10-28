@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <th:block th:include="include :: header('订单发货')" />
+    <style type="text/css">
+        .info{
+            height: 100%;
+            position: relative;
+            top: 50%;
+            transform: translateY(42%);
+        }
+    </style>
+</head>
+<body>
+<div class="form-content">
+    <form id="form-user-add" class="form-horizontal">
+        <h4><i class="fa fa-tag"></i> 订单发货</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">订单编号：</label>
+                    <div class="col-sm-8 info">
+                        <span class="orderFormNum"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">收货人：</label>
+                    <div class="col-sm-8 info">
+                        <span class="consignee"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">手机号：</label>
+                    <div class="col-sm-8 info">
+                        <span class="receivingTelephone"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">邮政编码：</label>
+                    <div class="col-sm-8 info">
+                        <span class="zipCode"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">收货地址：</label>
+                    <div class="col-sm-10 info">
+                        <span class="receivingAddress"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">配送方式：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group" style="width: 100%">
+                            <select name="deliveryType" class="form-control m-b" th:with="type=${@dict.getType('yd_logistics_company')}">
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">物流单号：</label>
+                    <div class="col-sm-8">
+                        <input name="freightBillNo" placeholder="请输入物流单号" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="orderId" />
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    //订单id
+    var shopId = getQueryString("shopId");
+    var orderId = getQueryString("orderId");
+
+    var prefix = ctx + "yd/backstage/shopping/orders";
+    $(function() {
+        $("input[name=\"orderId\"]").val(orderId);
+        initInfo();
+    });
+
+    function initInfo(){
+        $.ajax({
+            type: "POST",
+            url:  prefix + "/getDeliverGoodsInfo",
+            data: "orderId="+orderId,
+            dataType: "json",
+            success: function(data){
+                var status = data.status;
+                if(status == 1 || status == "1"){
+                    var info = data.info;
+                    $(".orderFormNum").html(info.orderFormNum);
+                    $(".consignee").html(info.consignee);
+                    $(".receivingTelephone").html(info.receivingTelephone);
+                    $(".zipCode").html(info.zipCode);
+                    $(".receivingAddress").html(info.receivingAddress);
+                    $("select[name=\"deliveryType\"]").val(info.distributionModeType);
+                    $("input[name=\"freightBillNo\"]").val(info.freightBillNo);
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

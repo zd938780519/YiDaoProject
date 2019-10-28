@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdReportMapper">
+    <resultMap id="YdReportResult" type="YdReportingRecords">
+        <id     property="id" column="id" />
+        <result property="fromId"             column="from_id"          />
+        <result property="toId"             column="to_id"          />
+        <result property="reportType"             column="report_type"          />
+        <result property="reportShow"             column="report_show"          />
+        <result property="reportReason"             column="report_reason"          />
+        <result property="processingStatus"             column="processing_status"          />
+        <result property="processingStatusShow"             column="processing_status_show"          />
+        <result property="createTime"             column="create_time"          />
+        <result property="updateTime"             column="update_time"          />
+        <result property="status"             column="status"          />
+        <result property="other1"             column="other1"          />
+        <result property="other2"             column="other2"          />
+
+        <result property="name"             column="name"          />
+        <result property="num"             column="num"          />
+        <result property="fname"             column="fname"          />
+        <collection property="images" ofType="com.ruoyi.system.domain.YdReportingRecordsImage" column="rr_Id">
+            <result property="rrId"             column="rr_id"          />
+            <result property="path"             column="path"          />
+        </collection>
+    </resultMap>
+
+
+
+
+    <insert id="insertReportInfo" parameterType="YdReportingRecords" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_reporting_records
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fromId != null  and fromId != ''  ">from_Id,</if>
+            <if test="toId != null  and toId != ''  ">to_Id,</if>
+            <if test="reportType != null  and reportType  != ''  ">report_Type,</if>
+            <if test="reportShow != null  and reportShow  != ''  ">report_Show,</if>
+            <if test="reportReason != null  and reportReason  != ''  ">report_Reason,</if>
+            <if test="processingStatus != null  and processingStatus  != ''  ">processing_Status,</if>
+            <if test="processingStatusShow != null  and processingStatusShow  != ''  ">processing_status_show,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fromId != null  and fromId != ''  ">#{fromId},</if>
+            <if test="toId != null  and toId != ''  ">#{toId},</if>
+            <if test="reportType != null  and reportType != '' ">#{reportType} ,</if>
+            <if test="reportShow != null  and reportShow != '' ">#{reportShow} ,</if>
+            <if test="reportReason != null  and reportReason != '' ">#{reportReason} ,</if>
+            <if test="processingStatus != null  and processingStatus != '' ">#{processingStatus} ,</if>
+            <if test="processingStatusShow != null  and processingStatusShow != '' ">#{processingStatusShow} ,</if>
+        </trim>
+    </insert>
+
+
+    <select id="selectAllReportInfo" resultMap="YdReportResult">
+        select rr.*,u.name,t.num,ua.content,u.status accountStatus,rri.path,u1.name fname
+        from yd_reporting_records rr
+        left join yd_reporting_records_image rri on rri.rr_id=rr.id
+        inner join yd_user u on u.id=rr.to_id
+        inner join yd_user u1 on u1.id=rr.from_id
+        left join (
+	        select count(1) num,to_id from yd_reporting_records where processing_status=2 and status>-1 group by to_id
+        ) t on t.to_id=u.id
+        left join yd_user_appeal ua on ua.user_id=u.id and ua.status>-1
+        where rr.status>-1
+        order by rr.create_time
+    </select>
+
+    <update id="updateReportInfo" parameterType="YdReportingRecords">
+        update yd_reporting_records
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="processingStatus != null  and processingStatus != ''  ">processing_status = #{processingStatus},</if>
+            <if test="processingStatusShow != null  and processingStatusShow != ''  ">processing_status_show = #{processingStatusShow},</if>
+            <if test="status != null  and status != ''  ">status = #{status},</if>
+        </trim>
+        where id=#{id}
+    </update>
+
+
+
+
+
+
+
+
+
+
+
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdCodeMapper">
+    
+    <resultMap type="YdCode" id="YdCodeResult">
+        <result property="phone"    column="phone"    />
+        <result property="mCode"    column="m_code"    />
+        <result property="id"    column="id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+	
+	<sql id="selectYdCodeVo">
+        select phone, m_code, id, create_time from yd_code
+    </sql>
+	
+    <select id="selectYdCodeList" parameterType="YdCode" resultMap="YdCodeResult">
+        <include refid="selectYdCodeVo"/>
+        <where>  
+            <if test="phone != null  and phone != '' "> and phone = #{phone}</if>
+             <if test="mCode != null  and mCode != '' "> and m_code = #{mCode}</if>
+             <if test="id != null "> and id = #{id}</if>
+             <if test="createTime != null "> and create_time = #{createTime}</if>
+         </where>
+    </select>
+    
+    <select id="selectYdCodeById" parameterType="String" resultMap="YdCodeResult">
+        <include refid="selectYdCodeVo"/>
+        where phone = #{phone}
+    </select>
+
+
+    <select id="selectYdCode" parameterType="String" resultType="java.lang.String">
+          select m_code from yd_code
+        where phone = #{phone}
+    </select>
+
+
+
+        
+    <insert id="insertYdCode" parameterType="YdCode">
+        insert into yd_code
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="phone != null  and phone != ''  ">phone,</if>
+			<if test="mCode != null  and mCode != ''  ">m_code,</if>
+			<if test="id != null  ">id,</if>
+			<if test="createTime != null  ">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="phone != null  and phone != ''  ">#{phone},</if>
+			<if test="mCode != null  and mCode != ''  ">#{mCode},</if>
+			<if test="id != null  ">#{id},</if>
+			<if test="createTime != null  ">#{createTime},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateYdCode" parameterType="YdCode">
+        update yd_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="mCode != null  and mCode != ''  ">m_code = #{mCode},</if>
+            <if test="id != null  ">id = #{id},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+        </trim>
+        where phone = #{phone}
+    </update>
+
+	<delete id="deleteYdCodeById" parameterType="String">
+        delete from yd_code where phone = #{phone}
+    </delete>
+	
+    <delete id="deleteYdCodeByIds" parameterType="String">
+        delete from yd_code where phone in 
+        <foreach item="phone" collection="array" open="(" separator="," close=")">
+            #{phone}
+        </foreach>
+    </delete>
+    
+</mapper>

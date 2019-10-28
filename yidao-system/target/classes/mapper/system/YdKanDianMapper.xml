@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdKanDianMapper">
+
+    <resultMap id="ydUser" type="YdUser">
+        <id property="id" column="id"/>
+        <result property="userName" column="username"/>
+        <result property="phoneNum" column="phone_num"/>
+        <result property="isVip" column="is_vip"/>
+        <result property="briefIntroduction" column="brief_introduction"/>
+        <result property="sex" column="sex"/>
+        <result property="sexShow" column="sex_show"/>
+        <result property="birthday" column="birthday"/>
+        <result property="follow" column="follow"/>
+        <result property="apprentice" column="apprentice"/>
+        <result property="coverPhotoPath" column="cover_photo_path"/>
+        <result property="fansNum" column="fans_num"/>
+        <result property="foodInterestNum" column="food_interest_num"/>
+        <result property="slogan" column="slogan"/>
+        <result property="worksNum" column="works_num"/>
+        <result property="teachingNum" column="teaching_num"/>
+        <result property="ruralFlavorNum" column="rural_flavor_num"/>
+        <result property="currentAddress" column="current_address"/>
+        <result property="hometown" column="hometown"/>
+        <result property="isFollow" column="is_follow"/>
+        <result property="isApprentice" column="is_apprentice"/>
+        <result property="isPullBlack" column="is_pull_black"/>
+        <result property="photoPath" column="photoPath"/>
+        <collection property="phVideoPath" ofType="com.ruoyi.system.domain.YdVideo">
+            <id property="sellerId" column="seller_id"/>
+            <result property="id" column="id"/>
+            <result property="videoPath" column="videoPath"/>
+            <result property="wantEatNum" column="wantEatNum"/>
+            <result property="explanatoryText" column="explanatoryText"/>
+        </collection>
+
+    </resultMap>
+
+
+    <resultMap id="YdTeachingContentResult" type="YdTeachingContent">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="dishName" column="dish_name"/>
+        <result property="browseNum" column="browse_num"/>
+        <result property="isSelected" column="is_Selected"/>
+        <result property="collectionNum" column="collection_num"/>
+        <result property="heatNum" column="heat_num "/>
+        <result property="commentNum" column="comment_num"/>
+        <result property="forwardNum" column="forward_num"/>
+        <result property="resultVideoPath" column="result_video_path"/>
+        <result property="thumbnailPath" column="thumbnail_path"/>
+        <result property="resultPicturePath" column="result_picture_path"/>
+        <result property="experience" column="experience"/>
+        <result property="skill" column="skill"/>
+        <result property="cookingTime" column="cooking_time"/>
+        <result property="cookingTimeShow" column="cooking_time_show"/>
+        <result property="flavor" column="flavor"/>
+        <result property="flavorShow" column="flavor_show"/>
+        <result property="difficulty" column="difficulty"/>
+        <result property="difficultyShow" column="difficulty_show"/>
+        <result property="stateType" column="state_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="other1" column="other1"/>
+        <result property="other2" column="other2"/>
+        <result property="isFabulous" column="is_fabulous"/>
+        <collection property="materials" ofType="com.ruoyi.system.domain.YdTeachingMaterials">
+            <result property="material" column="material"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="YdRuralFlavorResult" type="YdRuralFlavor">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="videoPath" column="video_path"/>
+        <result property="content" column="content"/>
+        <result property="fabulousNum" column="fabulous_num"/>
+        <result property="stepNum" column="step_num"/>
+        <result property="commentNum" column="comment_num"/>
+        <result property="forwardNum" column="forward_num"/>
+        <result property="stateType" column="state_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="other2" column="other2"/>
+        <association property="userNameTT"  javaType="YdUser">
+            <result property="userName" column="userName"/>
+            <result property="photoPath" column="photoPath"/>
+        </association>
+        <collection property="images" ofType="com.ruoyi.system.domain.YdRuralFlavorPicture">
+            <result property="picturePath" column="picturePath"/>
+        </collection>
+
+    </resultMap>
+
+
+    <!--排行板块(附近商家)-->
+    <select id="searchYdUser" resultMap="ydUser">
+      select yd_user.id,yd_user.name username,photo_path photoPath,brief_introduction,follow,
+      yd_video_info.video_path videoPath
+      from yd_user
+      left join yd_video_info
+      on
+      yd_user.id=yd_video_info.seller_id
+      where
+      yd_user.is_periphery_restaurant=1
+      limit #{currIndex} , #{pageSize}
+    </select>
+    <!--特色板块（展示特色视频）-->
+    <select id="showYdUser" resultMap="ydUser">
+        select yd_video_info.id,yd_user.id seller_id,yd_user.name username,photo_path
+        photoPath,yd_video_info.want_eat_num wantEatNum,
+        yd_video_info.video_path videoPath
+        from yd_user
+        left join yd_video_info
+        on
+        yd_user.id=yd_video_info.seller_id
+        where
+        yd_video_info.feature=1<!--特色视频-->
+        limit #{currIndex} , #{pageSize}
+    </select>
+
+    <!--看点搜索1（教学搜索）-->
+    <select id="searchForTeaching" resultMap="YdTeachingContentResult">
+        select tc.id id,tc.dish_name,tm.material material,ydus.`name` ,tc.browse_num ,tc.collection_num
+        ,tc.result_video_path ,tc.thumbnail_path
+        from yd_teaching_content tc
+        LEFT JOIN yd_teaching_materials tm
+        on tc.id=tm.tc_id
+        inner JOIN yd_user ydus
+        on ydus.id=tc.user_id
+        <trim prefix="where" suffixOverrides="and|or">
+            <if test="searchWord!=null">
+                tc.dish_name like Concat('%' ,#{searchWord}, '%')
+            </if>
+        </trim>
+        limit #{currIndex} , #{pageSize}
+    </select>
+
+    <!--看点搜索2（特色搜索）-->
+    <select id="searchForFeature" resultMap="ydUser">
+        select yd_video_info.id id,yd_user.id seller_id,yd_user.name username,photo_path
+        photoPath,yd_video_info.want_eat_num wantEatNum,
+        yd_video_info.video_path videoPath
+        from yd_user
+        left join yd_video_info
+        on
+        yd_user.id=yd_video_info.seller_id
+        <trim prefix="where" suffixOverrides="and|or">
+            <if test="searchWord!=null">
+                yd_video_info.explanatory_text like Concat('%' ,#{searchWord}, '%')
+            </if>
+        </trim>
+        and yd_video_info.feature=1
+        limit #{currIndex} , #{pageSize}
+    </select>
+    <!--看点搜索3（乡味搜索）-->
+    <select id="searchForRuralFlavor" resultMap="YdRuralFlavorResult">
+        select rf.id,rf.video_path,rf.content,rf.fabulous_num,rf.comment_num,rf.forward_num,u.`name` userName,u.photo_path photoPath,
+        fp.picture_path picturePath
+        from yd_rural_flavor rf
+        inner join yd_user u
+        on u.id=rf.user_id
+        inner join yd_rural_flavor_picture fp
+        on rf.id=fp.rf_id
+        <trim prefix="where" suffixOverrides="and|or">
+            <if test="searchWord!=null">
+                rf.content like Concat('%' ,#{searchWord}, '%')
+            </if>
+        </trim>
+        limit #{currIndex} , #{pageSize}
+    </select>
+</mapper>

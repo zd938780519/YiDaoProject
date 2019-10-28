@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdSellerOrderItemMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdSellerOrderItem">
+      <id column="id" property="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="seller_id" property="sellerId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="order_id" property="orderId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="dish_id" property="dishId"/>
+      <result column="dish_name" property="dishName" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="thumbnail_path" property="thumbnailPath" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="food_num" property="foodNum" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="original_price" property="originalPrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="actual_price" property="actualPrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="discount" property="discount" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="combo_goods" property="comboGoods"/>
+      <result column="combo_start_time" property="comboStartTime"/>
+      <result column="combo_end_time" property="comboEndTime"/>
+      <result column="combo_time_on" property="comboTimeOn"/>
+      <result column="combo_time_off" property="comboTimeOff"/>
+      <result column="combo_remark" property="comboRemark"/>
+      <result column="create_time" property="createTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="update_time" property="updateTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="status" property="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="other1" property="other1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="other2" property="other2" javaType="java.lang.String" jdbcType="VARCHAR" />
+  </resultMap>
+    <!-- 批量新增 -->
+  <insert id="insert" parameterType="java.util.List">
+    insert into yd_seller_order_item (seller_id, order_id,dish_id,
+      dish_name, thumbnail_path, food_num, 
+      original_price, actual_price, discount,combo_goods,
+      combo_start_time,combo_end_time,combo_time_on,combo_time_off,combo_remark)
+    values 
+    <foreach collection="list" item="emp" separator=",">
+        (#{emp.sellerId}, #{emp.orderId},#{emp.dishId},#{emp.dishName}, #{emp.thumbnailPath},
+        #{emp.foodNum},#{emp.originalPrice}, #{emp.actualPrice}, #{emp.discount},
+        #{emp.comboGoods},#{emp.comboStartTime},#{emp.comboEndTime},#{emp.comboTimeOn},
+        #{emp.comboTimeOff},#{emp.comboRemark})
+    </foreach>
+  </insert>
+    <!-- 根据订单id和店铺id查询子表信息 -->
+    <select id="selectByOrderIdAndShopId" parameterType="com.ruoyi.system.domain.YdSellerOrderItem" resultMap="BaseResultMap">
+      SELECT id,seller_id, order_id,dish_id,dish_name, thumbnail_path, food_num
+      FROM `yd_seller_order_item`
+      where order_id = #{orderId} and seller_id = #{sellerId} and status > -1
+    </select>
+    <!-- 逻辑删除订单子表信息 -->
+    <update id="delete" parameterType="java.lang.Integer">
+        update yd_seller_order_item set status = -1 where order_id = #{orderId}
+    </update>
+</mapper>

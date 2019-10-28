@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdRuralFlavorMapper">
+    <resultMap id="YdRuralFlavorResult" type="YdRuralFlavor">
+        <id     property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="videoPath" column="video_path" />
+        <result property="content" column="content" />
+        <result property="fabulousNum" column="fabulous_num" />
+        <result property="stepNum" column="step_num" />
+        <result property="commentNum" column="comment_num" />
+        <result property="forwardNum" column="forward_num" />
+        <result property="stateType" column="state_type" />
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
+        <result property="status" column="status" />
+        <result property="other1" column="other1" />
+        <result property="other2" column="other2" />
+
+        <result property="other2" column="other2" />
+        <result property="other2" column="other2" />
+        <result property="other2" column="other2" />
+
+        <collection property="images" ofType="com.ruoyi.system.domain.YdRuralFlavorPicture" column="rf_id">
+            <result property="rfId"             column="rf_id"          />
+            <result property="picturePath"             column="picture_path"          />
+        </collection>
+    </resultMap>
+
+    <resultMap id="YdRuralFlavorPictureResult" type="YdRuralFlavorPicture">
+        <id     property="id" column="id" />
+        <result property="rfId" column="rf_id" />
+        <result property="picturePath" column="picture_path" />
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
+        <result property="status" column="status" />
+        <result property="other1" column="other1" />
+        <result property="other2" column="other2" />
+    </resultMap>
+
+
+    <insert id="insertRuralFlavor" parameterType="YdRuralFlavor" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_rural_flavor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId        != null  and  userId        != ''  ">user_id       ,</if>
+            <if test="videoPath     != null  and  videoPath     != ''  ">video_path    ,</if>
+            <if test="content       != null  and  content       != ''  ">content       ,</if>
+            <if test="fabulousNum   != null  and  fabulousNum   != ''  ">fabulous_num  ,</if>
+            <if test="stepNum       != null  and  stepNum       != ''  ">step_num      ,</if>
+            <if test="commentNum    != null  and  commentNum    != ''  ">comment_num   ,</if>
+            <if test="forwardNum    != null  and  forwardNum    != ''  ">forward_num   ,</if>
+            <if test="collectionNum != null  and  collectionNum != ''  ">collection_num,</if>
+            <if test="stateType != null  and  stateType != ''  ">state_type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId        != null  and userId        != ''  ">#{userId},</if>
+            <if test="videoPath     != null  and videoPath     != ''  ">#{videoPath},</if>
+            <if test="content       != null  and content       != ''  ">#{content},</if>
+            <if test="fabulousNum   != null  and fabulousNum   != ''  ">#{fabulousNum},</if>
+            <if test="stepNum       != null  and stepNum       != ''  ">#{stepNum},</if>
+            <if test="commentNum    != null  and commentNum    != ''  ">#{commentNum},</if>
+            <if test="forwardNum    != null  and forwardNum    != ''  ">#{forwardNum},</if>
+            <if test="collectionNum != null  and collectionNum != ''  ">#{collectionNum},</if>
+            <if test="stateType != null  and stateType != ''  ">#{stateType},</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteRuralFlavor" parameterType="long">
+        delete from yd_rural_flavor where  id=#{id}
+    </delete>
+
+    <delete id="deleteRuralFlavorPicture" parameterType="long">
+        delete from yd_rural_flavor_picture where  rf_id=#{id}
+    </delete>
+
+    <update id="updateReleaseType">
+        update yd_rural_flavor set state_type=2 where id=#{id}
+    </update>
+
+    <select id="selectRuralFlavorById" resultMap="YdRuralFlavorResult">
+        select user_id,video_path,content,fabulous_num,step_num,comment_num,forward_num,collection_num from yd_rural_flavor where id=#{id} and status>-1
+    </select>
+
+    <select id="selectRuralFlavorsByHometown" resultMap="YdRuralFlavorResult">
+        select rf.id,rf.user_id,rf.video_path,rf.content,rf.fabulous_num,rf.step_num,rf.comment_num,rf.forward_num,rf.collection_num,
+        rfur.is_collection,rfur.is_forward,rfur.fabulous_or_step ,rfp.rf_id,rfp.picture_path
+		from yd_rural_flavor rf
+        inner join yd_user u on u.id=rf.user_id
+		left join yd_rural_flavor_picture rfp on rfp.rf_id=rf.id and rfp.`status`>-1
+        left join yd_rural_flavor_user_relation rfur on rf.id=rfur.rf_id and rfur.`status`>-1 and rfur.user_id = #{userId}
+        where u.hometown = #{hometown} and rf.state_type=2 and rf.`status`>-1 and u.`status`>-1
+        and not EXISTS (SELECT 1 FROM yd_shield_info si WHERE si.from_id=#{userId} and u.id=si.to_id)
+        order by fabulous_num desc
+        limit #{currIndex} , #{pageSize}
+    </select>
+
+    <select id="selectRuralFlavorsByUserId" resultMap="YdRuralFlavorResult">
+        select rf.id,rf.user_id,rf.video_path,rf.content,rf.fabulous_num,rf.step_num,rf.comment_num,rf.forward_num,rf.collection_num,
+        rfur.is_collection,rfur.is_forward,rfur.fabulous_or_step from yd_rural_flavor rf
+        inner join yd_user u on u.id=rf.user_id
+        left join yd_rural_flavor_user_relation rfur on rf.id=rfur.rf_id and rfur.`status`>-1 and rfur.user_id = #{userId}
+        where u.id = #{lookUserId} and rf.state_type=2 and rf.`status`>-1 and u.`status`>-1
+        limit #{currIndex} , #{pageSize}
+    </select>
+
+    <select id="selectDraftRuralFlavorsByUserId" resultMap="YdRuralFlavorPictureResult">
+         select user_id,video_path,content,fabulous_num,step_num,comment_num,forward_num,collection_num
+         from yd_rural_flavor where user_id=#{userId} and state_type = 1 and status>-1
+         limit #{currIndex} , #{pageSize}
+    </select>
+
+    <select id="selectRuralFlavorPictureByRfid" resultMap="YdRuralFlavorPictureResult">
+        select id,rf_id,picture_path from yd_rural_flavor_picture where rf_id=#{rfId} and status>-1
+    </select>
+
+    <update id="updateForwardNum">
+        update yd_rural_flavor set forward_num=forward_num+1 where id=#{id}
+    </update>
+
+    <update id="updateCollectionNum" parameterType="YdRuralFlavor">
+        update yd_rural_flavor set collection_num=collection_num+#{collectionNum} where id=#{id}
+    </update>
+
+    <update id="updateCommentNum" parameterType="YdRuralFlavor">
+        update yd_rural_flavor set comment_num=comment_num+#{commentNum} where id=#{id}
+    </update>
+
+    <update id="updateFabulousNum" parameterType="YdRuralFlavor">
+        update yd_rural_flavor set fabulous_num=fabulous_num+#{fabulousNum} where id=#{id}
+    </update>
+
+    <update id="updateStepNum" parameterType="YdRuralFlavor">
+        update yd_rural_flavor set step_num=step_num+#{stepNum} where id=#{id}
+    </update>
+
+    <update id="updateRuralFlavor" parameterType="YdRuralFlavor">
+        update yd_rural_flavor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="videoPath != null  and videoPath != ''  ">video_path = #{videoPath},</if>
+            <if test="content != null  and content != ''  ">content = #{content},</if>
+            <if test="stateType != null  and stateType != ''  ">state_type = #{stateType},</if>
+        </trim>
+        where id=#{id}
+    </update>
+
+</mapper>

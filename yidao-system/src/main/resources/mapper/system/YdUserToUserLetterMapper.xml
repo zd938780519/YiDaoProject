@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdUserToUserLetterMapper">
+    <resultMap id="YdUserToUserLetterResult" type="YdUserToUserLetter">
+        <id     property="id" column="id" />
+        <result property="fromId"             column="from_id"          />
+        <result property="toId"               column="to_id"            />
+        <result property="content"               column="content"            />
+        <result property="createTime"     column="create_time"     />
+        <result property="updateTime"     column="update_time"     />
+        <result property="status"          column="status"          />
+        <result property="other1"          column="other1"          />
+        <result property="other2"          column="other2"          />
+        <result property="fromPhotoPath"          column="from_Photo_Path"          />
+        <result property="toPhotoPath"          column="to_Photo_Path"          />
+    </resultMap>
+
+    <insert id="insertLetter" parameterType="YdUserToUserLetter" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_user_to_user_letter
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fromId != null  and fromId != ''  ">from_Id,</if>
+            <if test="toId != null  and toId != ''  ">to_Id,</if>
+            <if test="content != null  and content  != ''  ">content,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fromId != null  and fromId != ''  ">#{fromId},</if>
+            <if test="toId != null  and toId != ''  ">#{toId},</if>
+            <if test="content != null  and content  != ''  ">#{content},</if>
+        </trim>
+    </insert>
+
+    <select id="selectLetters"  parameterType="YdUserToUserLetter" resultMap="YdUserToUserLetterResult">
+        select l.id,l.from_id,l.to_id,l.content,l.create_time,u1.photo_path from_Photo_Path,u2.photo_path to_Photo_Path from yd_user_to_user_letter l
+        inner join yd_user u1 on u1.id=l.from_id
+        inner join yd_user u2 on u2.id=l.to_id
+        where ((from_id = #{fromId} and to_id = #{toId}) or ( to_id=#{fromId} and from_id=#{toId} )) and l.status>-1 and u1.status>-1 and u2.status>-1
+        ORDER BY l.create_time desc
+        limit #{currIndex} , #{pageSize}
+    </select>
+
+
+</mapper>

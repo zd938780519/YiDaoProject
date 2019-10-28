@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdSellerShopMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdSellerShop">
+      <id column="id" property="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="shop_name" property="shopName" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="logo" property="logo" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="other_logo" property="otherLogo" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="address" property="address" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="longitude" property="longitude" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="latitude" property="latitude" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="is_take_out" property="isTakeOut" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="start_money" property="startMoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="phone" property="phone" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="advertising_slogans" property="advertisingSlogans" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="time_on" property="timeOn" javaType="java.util.Date" jdbcType="TIME" />
+      <result column="time_off" property="timeOff" javaType="java.util.Date" jdbcType="TIME" />
+      <result column="is_activity" property="isActivity" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="lable_any_time" property="lableAnyTime" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="lable_free_appiontment" property="lableFreeAppiontment" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="lable_health" property="lableHealth" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="lable_real_name" property="lableRealName" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="sell_count_month" property="sellCountMonth" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="sell_count" property="sellCount" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="follow" property="follow" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="rate_of_acclaim" property="rateOfAcclaim" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="create_time" property="createTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="update_time" property="updateTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="status" property="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="other1" property="other1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="other2" property="other2" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="distance" property="distance" />
+  </resultMap>
+
+    <resultMap id="VoResultMap" type="com.ruoyi.system.domain.YdSellerShop">
+        <id column="id" property="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <result column="shop_name" property="shopName" javaType="java.lang.String" jdbcType="VARCHAR" />
+        <result column="logo" property="logo" javaType="java.lang.String" jdbcType="VARCHAR" />
+        <result column="other_logo" property="otherLogo" javaType="java.lang.String" jdbcType="VARCHAR" />
+        <result column="address" property="address" javaType="java.lang.String" jdbcType="VARCHAR" />
+        <result column="longitude" property="longitude" javaType="java.lang.String" jdbcType="VARCHAR" />
+        <result column="latitude" property="latitude" javaType="java.lang.String" jdbcType="VARCHAR" />
+        <result column="is_take_out" property="isTakeOut" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <result column="start_money" property="startMoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+        <result column="phone" property="phone" javaType="java.lang.String" jdbcType="VARCHAR" />
+        <result column="time_on" property="timeOn" javaType="java.util.Date" jdbcType="TIME" />
+        <result column="time_off" property="timeOff" javaType="java.util.Date" jdbcType="TIME" />
+        <result column="is_activity" property="isActivity" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <result column="lable_any_time" property="lableAnyTime" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <result column="lable_free_appiontment" property="lableFreeAppiontment" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <result column="lable_health" property="lableHealth" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <result column="lable_real_name" property="lableRealName" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <result column="rate_of_acclaim" property="rateOfAcclaim" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+        <collection property="hotGoodsList" ofType="com.ruoyi.system.domain.YdSellerHotGoods">
+            <result column="hot_id" property="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+            <result column="seller_shop_id" property="sellerShopId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+            <result column="hot_name" property="hotName" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <result column="brief" property="brief" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <result column="original_price" property="originalPrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+            <result column="discount" property="discount" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+            <result column="integral_limit" property="integralLimit" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+            <result column="integral_price" property="integralPrice" javaType="java.lang.Integer" jdbcType="INTEGER" />
+            <result column="photo_path" property="photoPath" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <result column="video_path" property="videoPath" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <result column="sale_price" property="salePrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+            <result column="sell_count" property="sellCount" javaType="java.lang.Integer" jdbcType="INTEGER" />
+            <result column="stored_count" property="storedCount" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        </collection>
+    </resultMap>
+  
+  <!-- 视频点击进入周边主页（搜索附近店铺） -->
+  <select id="getShopByDistance" parameterType="map" resultMap="BaseResultMap">
+    select id,shop_name,logo,rate_of_acclaim,sell_count,start_money,is_take_out,time_on,time_off,distance from (
+      select id,shop_name,logo,rate_of_acclaim,sell_count,start_money,is_take_out,time_on,time_off,
+        ROUND(
+          6378.138 * 2 * ASIN(
+          SQRT(
+            POW(
+            SIN((
+              #{lat} * PI() / 180 - latitude * PI() / 180
+            ) / 2),2
+            ) + COS( #{lat} * PI() / 180) * COS(latitude * PI() / 180) * POW(
+            SIN((
+              #{lng} * PI() / 180 - longitude * PI() / 180
+            ) / 2),2))) * 1000
+        ) as distance
+      from yd_seller_shop where STATUS > -1
+      ) as a
+    <![CDATA[
+    where distance <= 40000
+    ]]>
+    ORDER BY distance ASC
+  limit #{currIndex},#{pageSize}
+  </select>
+
+    <!-- 查询店铺和热卖商品列表 -->
+    <select id="getShowShop" parameterType="java.util.Map" resultMap="VoResultMap">
+        select yss.id,yss.shop_name,yss.logo,yss.other_logo,yss.address,yss.longitude,yss.latitude,yss.is_take_out,yss.start_money,yss.phone,yss.advertising_slogans,
+			yss.time_on,yss.time_off,yss.is_activity,yss.lable_any_time,yss.lable_free_appiontment,yss.lable_health,yss.lable_real_name,yss.rate_of_acclaim,
+			yshg.id as hot_id,yshg.seller_shop_id,yshg.hot_name,yshg.brief,yshg.original_price,yshg.discount,yshg.integral_limit,yshg.integral_price,yshg.photo_path,
+			yshg.video_path,yshg.sale_price,yshg.sell_count,yshg.stored_count
+        from yd_seller_shop as yss
+        LEFT JOIN yd_seller_hot_goods as yshg
+        ON yss.id = yshg.seller_shop_id
+        where yss.id = #{shopId}
+        and yss.`status` > -1 and yss.`status` > -1
+        ORDER BY yshg.id
+        limit #{currIndex},#{pageSize}
+    </select>
+
+    <!-- 根据id查询店铺信息 -->
+    <select id="getById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id, shop_name, address, longitude, latitude,start_money, phone, time_on, time_off, lable_any_time,
+            lable_free_appiontment, lable_health, lable_real_name
+        from yd_seller_shop
+        where id = #{id}
+        and status > -1
+    </select>
+
+    <!-- 更新店铺销量数据 -->
+    <update id="updateSellerCount" parameterType="com.ruoyi.system.domain.YdSellerShop">
+        update yd_seller_shop set sell_count = sell_count + #{sellCount} where id = #{id}
+    </update>
+
+    <!-- 更新店铺评分数据 -->
+    <update id="updateScore" parameterType="com.ruoyi.system.domain.YdSellerShop">
+        update yd_seller_shop set rate_of_acclaim = #{rateOfAcclaim} where id = #{id}
+    </update>
+  
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdSellerShop">
+    insert into yd_seller_shop (id, shop_name, logo, 
+      other_logo, address, longitude, 
+      latitude, is_take_out, start_money, 
+      phone, advertising_slogans, time_on, 
+      time_off, is_activity, lable_any_time, 
+      lable_free_appiontment, lable_health, lable_real_name, 
+      sell_count_month, sell_count, follow, 
+      rate_of_acclaim, create_time, update_time, 
+      `status`, other1, other2
+      )
+    values (#{id,jdbcType=INTEGER}, #{shopName,jdbcType=VARCHAR}, #{logo,jdbcType=VARCHAR}, 
+      #{otherLogo,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{longitude,jdbcType=VARCHAR}, 
+      #{latitude,jdbcType=VARCHAR}, #{isTakeOut,jdbcType=INTEGER}, #{startMoney,jdbcType=DECIMAL}, 
+      #{phone,jdbcType=VARCHAR}, #{advertisingSlogans,jdbcType=VARCHAR}, #{timeOn,jdbcType=TIME}, 
+      #{timeOff,jdbcType=TIME}, #{isActivity,jdbcType=INTEGER}, #{lableAnyTime,jdbcType=INTEGER}, 
+      #{lableFreeAppiontment,jdbcType=INTEGER}, #{lableHealth,jdbcType=INTEGER}, #{lableRealName,jdbcType=INTEGER}, 
+      #{sellCountMonth,jdbcType=INTEGER}, #{sellCount,jdbcType=INTEGER}, #{follow,jdbcType=INTEGER}, 
+      #{rateOfAcclaim,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER}, #{other1,jdbcType=VARCHAR}, #{other2,jdbcType=VARCHAR}
+      )
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, shop_name, logo, other_logo, address, longitude, latitude, is_take_out, 
+    start_money, phone, advertising_slogans, time_on, time_off, is_activity, lable_any_time, 
+    lable_free_appiontment, lable_health, lable_real_name, sell_count_month, sell_count, 
+    follow, rate_of_acclaim, create_time, update_time, `status`, other1, other2
+    from yd_seller_shop
+  </select>
+</mapper>

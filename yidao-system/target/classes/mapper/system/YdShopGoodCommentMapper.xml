@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdShopGoodCommentMapper">
+  <resultMap id="YdShopGoodCommentResult" type="YdShopGoodComment">
+    <id     property="id" column="id" />
+    <result property="soId"        column="so_id"     />
+    <result property="goodsId"        column="goods_id"     />
+    <result property="userId"        column="user_id"     />
+    <result property="content"        column="content"     />
+    <result property="videoPath"        column="video_path"     />
+    <result property="commentScore"        column="comment_score"     />
+    <result property="logisticsScore"        column="logistics_score"     />
+    <result property="attitudeScore"        column="attitude_score"     />
+    <result property="createTime"        column="create_time"     />
+    <result property="updateTime"        column="update_time"     />
+    <result property="status"        column="status"     />
+    <result property="other1"        column="other1"     />
+    <result property="other2"        column="other2"     />
+
+    <result property="userName"        column="name"     />
+    <result property="userPhotoPath"        column="user_photo_path"     />
+
+    <collection property="imagesPath" ofType="com.ruoyi.system.domain.YdShopGoodCommentImage" column="sgc_id">
+      <result property="photoPath"             column="comment_photo_path"          />
+    </collection>
+
+  </resultMap>
+  
+  <insert id="insert" parameterType="YdShopGoodComment" useGeneratedKeys="true" keyProperty="id">
+    insert into yd_shop_good_comment (so_id, goods_id,
+      user_id, content, video_path, 
+      comment_score, logistics_score, attitude_score)
+    values (#{soId,jdbcType=BIGINT}, #{goodsId,jdbcType=BIGINT},
+      #{userId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, #{videoPath,jdbcType=VARCHAR}, 
+      #{commentScore,jdbcType=INTEGER}, #{logisticsScore,jdbcType=INTEGER}, #{attitudeScore,jdbcType=INTEGER})
+  </insert>
+  <select id="selectAll" resultMap="YdShopGoodCommentResult">
+    select id, so_id, goods_id, user_id, content, video_path, comment_score, logistics_score, 
+    attitude_score, create_time, update_time, `status`, other1, other2
+    from yd_shop_good_comment
+    where `status`>-1
+  </select>
+
+  <select id="getCommentNumByGoodsId" parameterType="Long" resultType="Integer">
+    select count(1) num from yd_shop_good_comment where goods_id=#{goodsId}
+  </select>
+
+  <select id="getCommentByGoodsIdIsNew" parameterType="Long" resultMap="YdShopGoodCommentResult">
+   select u.`name`,u.photo_path user_photo_path,sgc.content,sgci.photo_path comment_photo_path from yd_shop_good_comment sgc
+    inner join yd_user u on sgc.user_id=u.id
+    left join yd_shop_good_comment_image sgci on sgc.id=sgci.sgc_id and sgci.`status`>-1
+    where goods_id=#{goodsId}
+    order by sgc.create_time desc
+    limit 0,1
+  </select>
+
+  <select id="getFavorableRate" parameterType="Long" resultMap="YdShopGoodCommentResult">
+    select * from yd_shop_good_comment where goods_id=#{goodsId}
+  </select>
+
+  <delete id="deleteComment">
+    delete from yd_shop_good_comment where id=#{id}
+  </delete>
+
+  <select id="selectCommentById" parameterType="Long" resultMap="YdShopGoodCommentResult">
+    select * from yd_shop_good_comment where id=#{id}
+  </select>
+
+  <select id="selectCommentByGoodsId" parameterType="Long" resultMap="YdShopGoodCommentResult">
+    select u.`name`,u.photo_path user_photo_path,sgc.id,sgc.*,sgci.photo_path comment_photo_path from yd_shop_good_comment sgc
+    inner join yd_user u on u.id=sgc.user_id
+    left join yd_shop_good_comment_image sgci on sgc.id=sgci.sgc_id and sgci.`status`>-1
+    where sgc.`status`>-1 and u.`status`>-1 and sgc.goods_id=#{goodsId}
+  </select>
+
+  <select id="selectCommentByGoodsIdAndType" resultMap="YdShopGoodCommentResult">
+    select u.`name`,u.photo_path user_photo_path,sgc.id,sgc.*,sgci.photo_path comment_photo_path from yd_shop_good_comment sgc
+    inner join yd_user u on u.id=sgc.user_id
+    left join yd_shop_good_comment_image sgci on sgc.id=sgci.sgc_id and sgci.`status`>-1
+    where sgc.`status`>-1 and u.`status`>-1 and sgc.goods_id=#{goodsId}
+    <if test='type == "1"'>
+        and (comment_score+logistics_score+attitude_score)/3 > 3
+    </if>
+    <if test='type == "2"'>
+        and (comment_score+logistics_score+attitude_score)/3 = 3
+    </if>
+    <if test='type == "3"'>
+      and (comment_score+logistics_score+attitude_score)/3 <![CDATA[<]]> 3
+    </if>
+  </select>
+
+  <select id="selectCommentNumToType" resultType="Map">
+      select (
+      select count(1)
+      from yd_shop_good_comment
+      where `status`>-1 and goods_id=19
+      and (comment_score+logistics_score+attitude_score)/3 <![CDATA[<]]> 3
+      ) cp, (
+      select count(1)
+      from yd_shop_good_comment
+      where `status`>-1 and goods_id=19
+      and (comment_score+logistics_score+attitude_score)/3 = 3
+      ) zp, (
+      select count(1)
+      from yd_shop_good_comment
+      where `status`>-1 and goods_id=19
+      and (comment_score+logistics_score+attitude_score)/3 > 3
+      ) hp
+      from dual
+  </select>
+
+</mapper>

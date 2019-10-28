@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdMallVoucherExchangeMapper">
+  <resultMap id="YdMallVoucherExchangeResult" type="YdMallVoucherExchange">
+    <id     property="id" column="id" />
+    <result property="userId"              column="user_id"          />
+    <result property="mvId"              column="mv_id"          />
+    <result property="beOverdueTime"              column="be_overdue_time"          />
+    <result property="useTime"              column="use_time"          />
+    <result property="createTime"              column="create_time"          />
+    <result property="status"              column="status"          />
+
+    <result property="amount"              column="amount"          />
+    <result property="limitedAmount"       column="limited_Amount"  />
+  </resultMap>
+
+  <insert id="insert" parameterType="YdMallVoucherExchange"  useGeneratedKeys="true" keyProperty="id">
+    insert into yd_mall_voucher_exchange (user_id, mv_id,
+      be_overdue_time, use_time)
+    values (#{userId,jdbcType=BIGINT}, #{mvId,jdbcType=BIGINT},
+      #{beOverdueTime,jdbcType=TIMESTAMP}, #{useTime,jdbcType=TIMESTAMP})
+  </insert>
+  <select id="selectAllByUser" resultMap="YdMallVoucherExchangeResult"  >
+    select id, user_id, mv_id, be_overdue_time, use_time, create_time, `status`
+    from yd_mall_voucher_exchange
+    where user_id=#{userId} and status=#{status}
+    limit #{currIndex} , #{pageSize}
+  </select>
+
+  <update id="updateStatus">
+    update yd_mall_voucher_exchange set status=#{status} where id=#{id}
+  </update>
+
+  <select id="selectVoucherByIdAndUserId"  resultMap="YdMallVoucherExchangeResult">
+    select mv.amount,mv.limited_amount
+    from yd_mall_voucher_exchange mve
+    inner join yd_mall_voucher mv on mv.id=mve.mv_id
+    where mve.user_id=#{userId} and mve.id=#{id} and mve.status>-1 and mv.status>-1
+  </select>
+
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdSellerHotCommentMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdSellerHotComment">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="seller_id" jdbcType="INTEGER" property="sellerId" />
+    <result column="order_num" jdbcType="INTEGER" property="orderNum" />
+    <result column="hot_good_id" jdbcType="INTEGER" property="hotGoodId" />
+    <result column="score" jdbcType="INTEGER" property="score" />
+    <result column="is_anonymity" jdbcType="INTEGER" property="isAnonymity" />
+    <result column="is_image" jdbcType="INTEGER" property="isImage" />
+    <result column="is_content" jdbcType="INTEGER" property="isContent" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="images" jdbcType="VARCHAR" property="images" />
+    <result column="video" jdbcType="VARCHAR" property="video" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="other1" jdbcType="VARCHAR" property="other1" />
+    <result column="other2" jdbcType="VARCHAR" property="other2" />
+  </resultMap>
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdSellerHotComment">
+    insert into yd_seller_hot_comment (user_id,seller_id,order_num, hot_good_id,
+      score, is_anonymity,is_image, is_content,
+      content, images, video)
+    values
+    <foreach collection="list" item="emp" separator=",">
+      (#{emp.userId,jdbcType=INTEGER},#{emp.sellerId,jdbcType=INTEGER},#{emp.orderNum,jdbcType=INTEGER}, #{emp.hotGoodId,jdbcType=INTEGER},
+      #{emp.score,jdbcType=INTEGER}, #{emp.isAnonymity,jdbcType=INTEGER},#{emp.isImage,jdbcType=INTEGER}, #{emp.isContent,jdbcType=INTEGER},
+      #{emp.content,jdbcType=VARCHAR}, #{emp.images,jdbcType=VARCHAR}, #{emp.video,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+
+  <!-- 统计店铺评分 -->
+  <select id="getAvgScore" parameterType="java.lang.Integer" resultType="java.math.BigDecimal">
+    select avg(part.score) from (select order_num,score from yd_seller_hot_comment where seller_id = #{sellerId} GROUP BY order_num) as part
+  </select>
+  <!-- 显示商品评论 -->
+  <select id="getCommentOfCond" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT
+      id,user_id,seller_id,order_num,hot_good_id,score,is_anonymity,is_image,is_content,content,images,video
+    FROM
+      yd_seller_hot_comment
+    where hot_good_id = #{goodId}
+    and status > -1
+    <if test="type == 2">
+      and is_image = 1
+    </if>
+    <if test="type == 3">
+	  and score = 1
+    </if>
+    ORDER BY id DESC
+    <if test="type == 4">
+      LIMIT 2
+    </if>
+    <if test="type != 4">
+      limit #{currIndex},#{pageSize}
+    </if>
+  </select>
+</mapper>

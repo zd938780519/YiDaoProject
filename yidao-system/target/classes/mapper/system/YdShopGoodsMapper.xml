@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdShopGoodsMapper">
+
+    <resultMap id="YdShopGoodsResult" type="YdShopGoods">
+        <id     property="id" column="id" />
+        <result property="shopId"        column="shop_id"     />
+        <result property="name"        column="name"     />
+        <result property="typeId"        column="type_id"     />
+        <result property="brief"        column="brief"     />
+        <result property="originalPrice"        column="original_price"     />
+        <result property="discount"        column="discount"     />
+        <result property="salePrice"        column="sale_price"     />
+        <result property="integralLimit"        column="integral_limit"     />
+        <result property="integralPrice"        column="integral_price"     />
+        <result property="photoPath"        column="photo_path"     />
+
+        <result property="isAllowCoupon"        column="is_allow_coupon"     />
+        <result property="isFixedMoneyAndIntegral"        column="is_fixed_money_and_integral"     />
+        <result property="isPureIntegral"        column="is_pure_integral"     />
+        <result property="likeNum"        column="like_num"     />
+        <result property="promotionalContent"        column="promotional_content"     />
+        <result property="detailsPhotoPath"        column="details_photo_path"     />
+        <result property="integralPaymentPrice"        column="integral_payment_price"     />
+        <result property="giveIntegralPrice"        column="give_integral_price"     />
+
+        <result property="storePrice"        column="store_price"     />
+        <result property="readCount"        column="read_count"     />
+        <result property="sellCount"        column="sell_count"     />
+        <result property="sellCountMonth"        column="sell_count_month"     />
+        <result property="isFreeShipping"        column="is_free_shipping"     />
+        <result property="shelfTime"        column="shelf_time"     />
+        <result property="storedCount"        column="stored_count"     />
+        <result property="anNumber"        column="an_number"     />
+        <result property="producer"        column="producer"     />
+        <result property="parameterType"        column="parameter_type"     />
+        <result property="packageType"        column="package"     />
+        <result property="createTime"        column="create_time"     />
+        <result property="updateTime"        column="update_time"     />
+        <result property="status"        column="status"     />
+        <result property="other1"        column="other1"     />
+        <result property="other2"        column="other2"     />
+
+        <result property="shopName"        column="shop_Name"     />
+        <result property="typeShow"        column="type_show"     />
+        <result property="goodsUnitPrice"        column="goods_unit_price"     />
+        <result property="goodsCount"        column="goods_count"     />
+
+        <collection property="serve" ofType="com.ruoyi.system.domain.YdShopGoodsServe" column="goods_id">
+            <result property="goodsId"             column="goods_id"          />
+            <result property="content"             column="content"          />
+        </collection>
+
+    </resultMap>
+
+
+    <resultMap id="YdShopGoodsChoiceResult" type="YdShopGoods">
+        <id     property="id" column="id" />
+        <result property="brief"        column="brief"     />
+        <result property="salePrice"        column="sale_price"     />
+        <result property="integralLimit"        column="integral_limit"     />
+        <result property="integralPrice"        column="integral_price"     />
+        <result property="photoPath"        column="g_photo_path"     />
+        <result property="isAllowCoupon"        column="is_allow_coupon"     />
+        <result property="isFixedMoneyAndIntegral"        column="is_fixed_money_and_integral"     />
+        <result property="isPureIntegral"        column="is_pure_integral"     />
+        <result property="parameterType"        column="parameter_type"     />
+
+        <collection property="goodsParameters" ofType="com.ruoyi.system.domain.YdShopGoodsParameter" column="sg_id">
+            <id     property="id" column="sgp_id" />
+            <result property="photoPath"             column="p_photo_path"          />
+            <result property="parameter"             column="parameter"          />
+            <result property="storedCount"             column="stored_count"          />
+        </collection>
+    </resultMap>
+
+
+    <select id="selectAll" parameterType="YdShopGoods" resultMap="YdShopGoodsResult">
+        select sg.*,s.name shop_name ,sgt.type_show from yd_shop_goods sg
+        inner join yd_shop s on s.id=sg.shop_id
+        inner join yd_shop_good_type sgt on sgt.id=sg.type_id
+        where sg.`status`>-1 and s.`status`>-1 and sgt.`status`>-1
+        <if test="shopId != null  and shopId != ''  "> and sg.shop_id=#{shopId} </if>
+        <if test="name != null  and name != ''  "> and sg.name like '%${name}%' </if>
+    </select>
+
+    <insert id="insertGoods"  parameterType="YdShopGoods" useGeneratedKeys="true" keyProperty="id">
+         insert into yd_shop_goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shopId         != null  and  shopId         != ''  ">shop_id         ,</if>
+            <if test="name           != null  and  name           != ''  ">`name`            ,</if>
+            <if test="typeId         != null  and  typeId         != '' or typeId==0 ">type_id         ,</if>
+            <if test="brief          != null  and  brief          != ''  ">brief           ,</if>
+            <if test="originalPrice  != null  and  originalPrice  != '' or originalPrice==0 ">original_price  ,</if>
+            <if test="discount       != null  and  discount       != '' or discount==0 ">discount        ,</if>
+            <if test="salePrice      != null  and  salePrice      != '' or salePrice==0 ">sale_price      ,</if>
+            <if test="integralLimit  != null  and  integralLimit  != '' or integralLimit==0 ">integral_limit  ,</if>
+            <if test="photoPath  != null  and  photoPath  != ''  ">photo_Path  ,</if>
+
+            <if test="isAllowCoupon  != null  and  isAllowCoupon  != ''  ">is_allow_coupon  ,</if>
+            <if test="isFixedMoneyAndIntegral  != null  and  isFixedMoneyAndIntegral  != ''  ">is_fixed_money_and_integral  ,</if>
+            <if test="isPureIntegral  != null  and  isPureIntegral  != ''  ">is_pure_integral  ,</if>
+            <if test="likeNum  != null  and  likeNum  != ''  ">like_num  ,</if>
+            <if test="promotionalContent  != null  and  promotionalContent  != ''  ">promotional_content  ,</if>
+            <if test="detailsPhotoPath  != null  and  detailsPhotoPath  != ''  ">details_photo_path  ,</if>
+
+            <if test="storePrice     != null  and  storePrice     != '' or storePrice==0 ">store_price     ,</if>
+            <if test="readCount      != null  and  readCount      != '' or readCount==0 ">read_count      ,</if>
+            <if test="sellCount      != null  and  sellCount      != '' or sellCount==0 ">sell_count      ,</if>
+            <if test="sellCountMonth != null  and  sellCountMonth != ''  ">sell_count_month,</if>
+            <if test="isFreeShipping != null  and  isFreeShipping != '' or isFreeShipping==0 ">is_free_shipping,</if>
+            <if test="shelfTime      != null  and  shelfTime      != ''  ">shelf_time      ,</if>
+            <if test="storedCount    != null  and  storedCount    != '' or storedCount==0 ">stored_count    ,</if>
+            <if test="anNumber       != null  and  anNumber       != ''  ">an_number       ,</if>
+            <if test="producer       != null  and  producer       != ''  ">producer        ,</if>
+            <if test="parameter      != null  and  parameter      != ''  ">parameter       ,</if>
+            <if test="packageType    != null  and  packageType    != ''  ">package         ,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shopId         != null  and  shopId         != ''  ">#{shopId},</if>
+            <if test="name           != null  and  name           != ''  ">#{name},</if>
+            <if test="typeId         != null  and  typeId         != '' or typeId==0 ">#{typeId},</if>
+            <if test="brief          != null  and  brief          != ''  ">#{brief},</if>
+            <if test="originalPrice  != null  and  originalPrice  != '' or originalPrice==0 ">#{originalPrice},</if>
+            <if test="discount       != null  and  discount       != '' or discount==0 ">#{discount},</if>
+            <if test="salePrice      != null  and  salePrice      != '' or salePrice==0 ">#{salePrice},</if>
+            <if test="integralLimit  != null  and  integralLimit  != '' or integralLimit==0 ">#{integralLimit},</if>
+            <if test="photoPath  != null  and  photoPath  != ''  ">#{photoPath}  ,</if>
+
+            <if test="isAllowCoupon  != null  and  isAllowCoupon  != ''  ">#{isAllowCoupon}  ,</if>
+            <if test="isFixedMoneyAndIntegral  != null  and  isFixedMoneyAndIntegral  != ''  ">#{isFixedMoneyAndIntegral}  ,</if>
+            <if test="isPureIntegral  != null  and  isPureIntegral  != ''  ">#{isPureIntegral}  ,</if>
+            <if test="likeNum  != null  and  likeNum  != ''  ">#{likeNum}  ,</if>
+            <if test="promotionalContent  != null  and  promotionalContent  != ''  ">#{promotionalContent}  ,</if>
+            <if test="detailsPhotoPath  != null  and  detailsPhotoPath  != ''  ">#{detailsPhotoPath}  ,</if>
+
+            <if test="storePrice     != null  and  storePrice     != '' or storePrice==0 ">#{storePrice},</if>
+            <if test="readCount      != null  and  readCount      != '' or readCount==0 ">#{readCount},</if>
+            <if test="sellCount      != null  and  sellCount      != '' or sellCount==0 ">#{sellCount},</if>
+            <if test="sellCountMonth != null  and  sellCountMonth != ''  ">#{sellCountMonth},</if>
+            <if test="isFreeShipping != null  and  isFreeShipping != '' or isFreeShipping==0 ">#{isFreeShipping},</if>
+            <if test="shelfTime      != null  and  shelfTime      != ''  ">#{shelfTime},</if>
+            <if test="storedCount    != null  and  storedCount    != '' or storedCount==0 ">#{storedCount},</if>
+            <if test="anNumber       != null  and  anNumber       != ''  ">#{anNumber},</if>
+            <if test="producer       != null  and  producer       != ''  ">#{producer},</if>
+            <if test="parameter      != null  and  parameter      != ''  ">#{parameter},</if>
+            <if test="packageType    != null  and  packageType    != ''  ">#{packageType},</if>
+        </trim>
+    </insert>
+
+    <update id="updateGoods" parameterType="YdShopGoods">
+        update yd_shop_goods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="shopId         != null  and shopId         != ''  ">shop_id          = #{shopId},</if>
+            <if test="name           != null  and name           != ''  ">`name`             = #{name},</if>
+            <if test="typeId         != null  and typeId         != '' or typeId==0  ">type_id          = #{typeId},</if>
+            <if test="brief          != null  and brief          != ''  ">brief            = #{brief},</if>
+            <if test="originalPrice  != null  and originalPrice  != '' or originalPrice==0 ">original_price   = #{originalPrice},</if>
+            <if test="discount       != null  and discount       != '' or discount==0 ">discount         = #{discount},</if>
+            <if test="salePrice      != null  and salePrice      != '' or salePrice==0 ">sale_price       = #{salePrice},</if>
+            <if test="integralLimit  != null  and integralLimit  != '' or integralLimit==0 ">integral_limit   = #{integralLimit},</if>
+            <if test="photoPath  != null  and  photoPath  != ''  ">photo_Path = #{photoPath} ,</if>
+
+            <if test="isAllowCoupon  != null  and  isAllowCoupon  != ''  ">is_allow_coupon = #{isAllowCoupon} ,</if>
+            <if test="isFixedMoneyAndIntegral  != null  and  isFixedMoneyAndIntegral  != ''  ">is_fixed_money_and_integral = #{isFixedMoneyAndIntegral} ,</if>
+            <if test="isPureIntegral  != null  and  isPureIntegral  != ''  ">is_pure_integral = #{isPureIntegral} ,</if>
+            <if test="likeNum  != null  and  likeNum  != ''  ">like_num = #{likeNum} ,</if>
+            <if test="promotionalContent  != null  and  promotionalContent  != ''  ">promotional_Content = #{promotionalContent} ,</if>
+            <if test="detailsPhotoPath  != null  and  detailsPhotoPath  != ''  ">details_photo_path = #{detailsPhotoPath} ,</if>
+
+            <if test="storePrice     != null  and storePrice     != '' or storePrice==0 ">store_price      = #{storePrice},</if>
+            <if test="readCount      != null  and readCount      != '' or readCount==0 ">read_count       = #{readCount},</if>
+            <if test="sellCount      != null  and sellCount      != '' or sellCount==0 ">sell_count       = #{sellCount},</if>
+            <if test="sellCountMonth != null  and sellCountMonth != ''  ">sell_count_month = #{sellCountMonth},</if>
+            <if test="isFreeShipping != null  and isFreeShipping != '' or isFreeShipping==0 ">is_free_shipping = #{isFreeShipping},</if>
+            <if test="shelfTime      != null  and shelfTime      != ''  ">shelf_time       = #{shelfTime},</if>
+            <if test="storedCount    != null  and storedCount    != '' or storedCount==0 ">stored_count     = #{storedCount},</if>
+            <if test="anNumber       != null  and anNumber       != ''  ">an_number        = #{anNumber},</if>
+            <if test="producer       != null  and producer       != ''  ">producer         = #{producer},</if>
+            <if test="parameter      != null  and parameter      != ''  ">parameter        = #{parameter},</if>
+            <if test="packageType    != null  and packageType    != ''  ">package          = #{packageType},</if>
+        </trim>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteGoods">
+        delete from yd_shop_goods where id=#{id}
+    </delete>
+
+    <select id="selectPhotoPathById" parameterType="Long" resultType="java.lang.String">
+        select photo_path from yd_shop_goods
+        where id=#{id}
+    </select>
+
+    <select id="selectGoodsByOrderId" parameterType="Long" resultMap="YdShopGoodsResult">
+        select sg.*,sog.goods_unit_price,sog.goods_count from yd_shop_order so
+        inner join yd_shop_order_goods sog on sog.so_id=so.id
+        inner join yd_shop_goods sg on sg.id=sog.goods_id
+        where sg.`status`>-1 and sog.`status`>-1 and so.`status`>-1 and so.id=#{orderId}
+        order by sog.create_time
+    </select>
+
+
+
+    <select id="selectGoods" resultMap="YdShopGoodsResult">
+        select sg.id,sg.photo_path,sg.`name`,sg.original_price,sg.discount,sg.sale_price,sg.integral_price,
+        sg.is_allow_coupon,sg.is_fixed_money_and_integral,sg.is_pure_integral
+        from yd_shop_goods sg
+        inner join yd_shop s on s.id=sg.shop_id
+        order by sell_count desc,sell_count_month desc,read_count desc
+        limit #{currIndex} , #{pageSize}
+    </select>
+
+    <select id="selectGoodsById" resultMap="YdShopGoodsResult">
+        select sg.*,sgs.content from yd_shop_goods sg
+        left join yd_shop_goods_serve sgs on sgs.goods_id=sg.id
+        where sg.id=#{goodsId}
+    </select>
+
+    <select id="selectGoodsByName" resultMap="YdShopGoodsResult">
+        select sg.id,sg.photo_path,sg.`name`,sg.original_price,sg.discount,sg.sale_price,sg.integral_price,
+        sg.is_allow_coupon,sg.is_fixed_money_and_integral,sg.is_pure_integral
+        from yd_shop_goods sg
+        inner join yd_shop s on s.id=sg.shop_id
+        where sg.name like '%${content}%' and sg.`status`>-1 and s.`status`>-1
+        order by sell_count desc,sell_count_month desc,read_count desc
+        limit #{currIndex} , #{pageSize}
+    </select>
+
+    <select id="selectGoodsParameters" parameterType="Long" resultMap="YdShopGoodsChoiceResult" >
+        select sg.id,sg.brief,sg.sale_price,sg.integral_limit,sg.integral_price,sg.photo_path g_photo_path,
+               sg.is_allow_coupon,sg.is_fixed_money_and_integral,sg.is_pure_integral,sg.parameter_type,
+               sgp.id sgp_id,sgp.photo_path p_photo_path,sgp.parameter,sgp.stored_count
+        from yd_shop_goods sg
+        inner join yd_shop_goods_parameter sgp on sgp.sg_id= sg.id
+        where sg.`status`>-1 and sgp.`status`>-1 and sg.id=#{goodsId}
+    </select>
+
+    <update id="updateStock" parameterType="java.util.List">
+        <!--<foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update yd_shop_goods_parameter
+            <set>
+                stored_count = stored_count - ${item.goodsCount}
+            </set>
+            where id = ${item.sgpId}
+        </foreach>-->
+        update yd_shop_goods_parameter set
+        <trim prefix="stored_count = case" suffix="end">
+            <foreach collection="list" item="item" index="index">
+                <if test="item.goodsCount!=null">
+                    when id=#{item.sgpId} then stored_count - ${item.goodsCount}
+                </if>
+            </foreach>
+        </trim>
+        where
+        <foreach collection="list" separator="or" item="item" index="index">
+            id=#{item.sgpId}
+        </foreach>
+    </update>
+
+</mapper>

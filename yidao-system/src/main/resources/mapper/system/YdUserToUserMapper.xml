@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdUserToUserMapper">
+    <resultMap id="YdUserToUserResult" type="YdUserToUser">
+        <id     property="id" column="id" />
+        <result property="fromId"             column="from_id"          />
+        <result property="toId"               column="to_id"            />
+        <result property="isFollow"           column="is_follow"        />
+        <result property="isApprentice"       column="is_apprentice"    />
+        <result property="isPullBlack"       column="is_pull_black"    />
+        <result property="createTime"     column="create_time"     />
+        <result property="updateTime"     column="update_time"     />
+        <result property="status"          column="status"          />
+        <result property="other1"          column="other1"          />
+        <result property="other2"          column="other2"          />
+        <result property="name"          column="name"          />
+        <result property="photoPath"          column="photo_path"          />
+    </resultMap>
+
+    <select id="selectUserToUserInfoByTo" parameterType="long" resultMap="YdUserToUserResult">
+        select from_id from yd_user_to_user_relation where to_id=#{id} and is_follow = 1
+    </select>
+
+    <select id="selectUserInfoByFromAndNameOrRemark" parameterType="YdUserToUser" resultMap="YdUserToUserResult">
+        select u.id,u.photo_path,u.name,utu.remark_name,utu.from_id,utu.to_id from yd_user u
+        left join yd_user_to_user_relation utu on u.id=utu.to_id and utu.from_id =#{fromId} and is_follow = 1
+        where 1=1
+        <if test="name != null  and name != ''  ">
+            and (utu.remark_name like concat('%',#{name},'%') or u.name like concat('%',#{name},'%'))
+        </if>
+        order by u.name
+    </select>
+
+    <select id="selectUserToUserIsHas" parameterType="YdUserToUser" resultType="Integer">
+        select count(1) num from yd_user_to_user_relation where from_id=#{fromId} and to_id=#{toId}
+    </select>
+
+
+    <insert id="insertUserToUserInfo" parameterType="YdUserToUser" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_user_to_user_relation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fromId != null  and fromId != ''  ">from_Id,</if>
+            <if test="toId != null  and toId != ''  ">to_Id,</if>
+            <if test="isFollow != null  and isFollow  != ''  ">is_Follow,</if>
+            <if test="isApprentice != null  and isApprentice  != ''  ">is_Apprentice,</if>
+            <if test="isPullBlack != null  and isPullBlack  != ''  ">is_Pull_Black,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fromId != null  and fromId != ''  ">#{fromId},</if>
+            <if test="toId != null  and toId != ''  ">#{toId},</if>
+            <if test="isFollow != null  and isFollow  != ''  ">#{isFollow},</if>
+            <if test="isApprentice != null  and isApprentice != '' ">#{isApprentice} ,</if>
+            <if test="isPullBlack != null  and isPullBlack != '' ">#{isPullBlack} ,</if>
+        </trim>
+    </insert>
+
+    <update id="updateUserToUserInfo"  parameterType="YdUserToUser" >
+         update yd_user_to_user_relation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isFollow != null  and isFollow != ''  ">is_Follow = #{isFollow},</if>
+            <if test="isApprentice != null  and isApprentice != ''  ">is_Apprentice = #{isApprentice},</if>
+            <if test="isPullBlack != null  and isPullBlack != ''  ">is_Pull_Black = #{isPullBlack},</if>
+        </trim>
+        where from_Id = #{fromId} and to_Id = #{toId}
+    </update>
+
+    <select id="getPullBlackType" parameterType="YdUserToUser" resultType="Integer" >
+        select is_pull_black from yd_user_to_user_relation where to_id=#{toId} and from_id=#{fromId} and status>-1
+    </select>
+
+
+
+
+
+</mapper>

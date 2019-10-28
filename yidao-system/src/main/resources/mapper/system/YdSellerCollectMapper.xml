@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdSellerCollectMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdSellerCollect">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="seller_id" jdbcType="INTEGER" property="sellerId" />
+    <result column="seller_name" jdbcType="VARCHAR" property="sellerName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="other1" jdbcType="VARCHAR" property="other1" />
+    <result column="other2" jdbcType="VARCHAR" property="other2" />
+  </resultMap>
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdSellerCollect">
+    insert into yd_seller_collect (user_id, seller_id,seller_name)
+    values (#{userId,jdbcType=INTEGER}, #{sellerId,jdbcType=INTEGER},#{sellerName,jdbcType=VARCHAR})
+  </insert>
+
+  <delete id="delete" parameterType="java.util.Map">
+    delete from yd_seller_collect where user_id = #{userId} and id = #{id}
+  </delete>
+
+  <delete id="deleteOfBatch" parameterType="java.util.Map">
+    delete from yd_seller_collect where user_id = #{userId} and id in
+    <foreach collection="ids" separator="," item="item" open="(" close=")">
+      #{item}
+    </foreach>
+  </delete>
+
+  <select id="selectCount" parameterType="com.ruoyi.system.domain.YdSellerCollect" resultType="java.lang.Integer">
+    select count(id)
+    from yd_seller_collect
+    where user_id = #{userId} and seller_id = #{sellerId}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, user_id, seller_id, seller_name, create_time, update_time, `status`, other1, 
+    other2
+    from yd_seller_collect
+  </select>
+</mapper>

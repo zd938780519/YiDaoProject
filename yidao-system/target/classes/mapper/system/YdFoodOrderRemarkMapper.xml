@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdFoodOrderRemarkMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdFoodOrderRemark">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="other1" jdbcType="VARCHAR" property="other1" />
+    <result column="other2" jdbcType="VARCHAR" property="other2" />
+  </resultMap>
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdFoodOrderRemark">
+    insert into yd_food_order_remark (user_id, content)
+    values (#{userId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR})
+  </insert>
+  <!-- 根据用户id查询备注 -->
+  <select id="selectAll" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, user_id, content
+    from yd_food_order_remark
+    where user_id = 0 or user_id = #{userId}
+    order by id desc
+  </select>
+  <!-- 查询用户备注是否存在 -->
+  <select id="selectExistRemark" parameterType="com.ruoyi.system.domain.YdFoodOrderRemark" resultType="java.lang.Integer">
+    select count(id) from yd_food_order_remark where (user_id = 0 or user_id = #{userId}) and content = #{content}
+  </select>
+  <!-- 查询用户备注数量 -->
+  <select id="selectRemarkNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select count(id) from yd_food_order_remark where user_id = #{userId}
+  </select>
+  <!-- 删除用户最早的备注 -->
+  <delete id="deleteLastRemark" parameterType="java.lang.Integer">
+    delete from yd_food_order_remark where user_id = #{userId} order by id asc limit 1
+  </delete>
+  <!-- 根据id删除备注 -->
+  <delete id="deleteById" parameterType="java.util.Map">
+    delete from yd_food_order_remark where id = #{id} and user_id = #{userId}
+  </delete>
+</mapper>

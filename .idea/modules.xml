@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/yidao.iml" filepath="$PROJECT_DIR$/yidao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yidao-api/yidao-api.iml" filepath="$PROJECT_DIR$/yidao-api/yidao-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yidao-common/yidao-common.iml" filepath="$PROJECT_DIR$/yidao-common/yidao-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yidao-framework/yidao-framework.iml" filepath="$PROJECT_DIR$/yidao-framework/yidao-framework.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yidao-system/yidao-system.iml" filepath="$PROJECT_DIR$/yidao-system/yidao-system.iml" />
+    </modules>
+  </component>
+</project>

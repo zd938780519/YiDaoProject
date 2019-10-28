@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdShopReceivingAddressMapper">
+  <resultMap id="YdShopReceivingAddressResult" type="YdShopReceivingAddress">
+    <id     property="id" column="id" />
+    <result property="userId"    column="user_id"    />
+    <result property="receivingAddress"          column="receiving_address"          />
+    <result property="locationAddress"          column="location_address"          />
+    <result property="longitude"          column="longitude"          />
+    <result property="latitude"          column="latitude"          />
+    <result property="detailedAddress"          column="detailed_address"          />
+    <result property="consignee"          column="consignee"          />
+    <result property="receivingTelephone"          column="receiving_telephone"          />
+    <result property="sex"          column="sex"          />
+    <result property="isDefault"          column="is_default"          />
+    <result property="labelId"          column="label_id"          />
+  </resultMap>
+
+  <insert id="insert" parameterType="YdShopReceivingAddress" useGeneratedKeys="true" keyProperty="id">
+    insert into yd_shop_receiving_address (user_id, receiving_address,
+      location_address, longitude, latitude,detailed_address,consignee,receiving_telephone, sex, is_default,label_id)
+    values (#{userId,jdbcType=BIGINT}, #{receivingAddress,jdbcType=VARCHAR},
+      #{locationAddress,jdbcType=VARCHAR}, #{longitude,jdbcType=DECIMAL}, #{latitude,jdbcType=DECIMAL}, 
+      #{detailedAddress,jdbcType=VARCHAR}, #{consignee,jdbcType=VARCHAR},
+      #{receivingTelephone,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{isDefault,jdbcType=INTEGER}, 
+      #{labelId,jdbcType=INTEGER})
+  </insert>
+  <select id="selectAllByUserId" parameterType="long"  resultMap="YdShopReceivingAddressResult">
+    select id,receiving_address, location_address, longitude, latitude, detailed_address,
+    consignee, receiving_telephone, sex, is_default, label_id
+    from yd_shop_receiving_address
+    where status>-1 and user_id=#{userId}
+    order by create_time
+  </select>
+
+  <select id="selectDefaultByUserId" parameterType="long"  resultMap="YdShopReceivingAddressResult">
+    select id,receiving_address, location_address, longitude, latitude, detailed_address,
+    consignee, receiving_telephone, sex, is_default, label_id
+    from yd_shop_receiving_address
+    where status>-1 and is_default = 1 and user_id=#{userId}
+  </select>
+
+  <update id="updateReceivingAddress" parameterType="YdShopReceivingAddress">
+    update yd_shop_receiving_address set receiving_address=#{receivingAddress},location_address=#{locationAddress},
+    longitude=#{longitude},latitude=#{latitude},detailed_address=#{detailedAddress},consignee=#{consignee},
+    receiving_telephone=#{receivingTelephone},sex=#{sex},is_default=#{isDefault},label_id=#{labelId}
+    where id=#{id}
+  </update>
+
+  <delete id="deleteReceivingAddress">
+    delete from yd_shop_receiving_address where id=#{raId}
+  </delete>
+
+  <delete id="deleteSomeReceivingAddress">
+    delete from yd_shop_receiving_address where id in
+    <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+      ${id}
+    </foreach>
+  </delete>
+
+</mapper>

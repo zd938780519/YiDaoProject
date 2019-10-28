@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdSellerBasketMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdSellerBasket">
+      <id column="id" property="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="user_id" property="userId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="total_price" property="totalPrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="sale_price" property="salePrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="goods_num" property="goodsNum" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="packing_expense" property="packingExpense" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="create_time" property="createTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="update_time" property="updateTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="status" property="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="other1" property="other1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="other2" property="other2" javaType="java.lang.String" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="VoResultMap" type="com.ruoyi.system.domain.YdSellerBasket">
+      <id column="ysb_id" property="id"/>
+      <collection property="basketGoodsList" ofType="com.ruoyi.system.domain.YdSellerBasketGoods">
+        <result column="id" property="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <result column="basket_id" property="basketId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <result column="shop_id" property="shopId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <result column="goods_id" property="goodsId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <result column="order_count" property="orderCount" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <association property="hotGoods" javaType="com.ruoyi.system.domain.YdSellerHotGoods">
+          <result column="hot_id" property="id"/>
+          <result column="hot_name" property="hotName" javaType="java.lang.String" jdbcType="VARCHAR" />
+          <result column="photo_path" property="photoPath" javaType="java.lang.String" jdbcType="VARCHAR" />
+          <result column="brief" property="brief" javaType="java.lang.String" jdbcType="VARCHAR" />
+          <result column="discount" property="discount" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+          <result column="original_price" property="originalPrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+          <result column="sale_price" property="salePrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+          <result column="packing_expense" property="packingExpense" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+          <result column="combo_goods" property="comboGoods"/>
+          <result column="combo_start_time" property="comboStartTime"/>
+          <result column="combo_end_time" property="comboEndTime"/>
+          <result column="combo_time_on" property="comboTimeOn"/>
+          <result column="combo_time_off" property="comboTimeOff"/>
+          <result column="combo_remark" property="comboRemark"/>
+        </association>
+      </collection>
+  </resultMap>
+  
+  <!-- 周边主页查询购物车信息 -->
+  <select id="getBasketByUserAndShop" parameterType="java.util.Map" resultMap="VoResultMap">
+    SELECT ysb.id as ysb_id,ysbg.id,ysbg.basket_id,ysbg.goods_id,ysbg.shop_id,ysbg.order_count,
+    yshg.id as hot_id,yshg.hot_name,yshg.photo_path,yshg.brief,yshg.discount,yshg.original_price,yshg.sale_price,yshg.packing_expense,
+    yshg.combo_start_time,yshg.combo_end_time
+    FROM yd_seller_basket ysb,`yd_seller_basket_goods` ysbg,yd_seller_hot_goods yshg
+    WHERE ysb.id = ysbg.basket_id and ysbg.goods_id = yshg.id
+    and ysb.user_id = #{userId}
+    and ysbg.shop_id = #{shopId}
+    and yshg.`status` > -1
+    order by ysbg.id asc
+  </select>
+
+  <!-- 周边主页查询购物车信息(字段较多，订单用) -->
+  <select id="getBasketByUserAndShopOfOrder" parameterType="java.util.Map" resultMap="VoResultMap">
+    SELECT ysb.id as ysb_id,ysbg.id,ysbg.basket_id,ysbg.goods_id,ysbg.shop_id,ysbg.order_count,
+        yshg.id as hot_id,yshg.hot_name,yshg.photo_path,yshg.brief,yshg.discount,yshg.original_price,yshg.sale_price,yshg.packing_expense,
+		yshg.combo_goods,yshg.combo_start_time,yshg.combo_end_time,yshg.combo_time_on,yshg.combo_time_off,yshg.combo_remark
+    FROM yd_seller_basket ysb,`yd_seller_basket_goods` ysbg,yd_seller_hot_goods yshg
+    WHERE ysb.id = ysbg.basket_id and ysbg.goods_id = yshg.id
+    and ysb.user_id = #{userId}
+    and ysbg.shop_id = #{shopId}
+    and yshg.`status` > -1
+    order by ysbg.id asc
+  </select>
+
+  <!--根据用户id查询购物车信息-->
+  <select id="getBasketByUserId" parameterType="java.lang.Integer" resultType="com.ruoyi.system.domain.YdSellerBasket">
+    select id, user_id, total_price, sale_price, goods_num, packing_expense, create_time,
+    update_time, `status`, other1, other2
+    from yd_seller_basket
+    where user_id = #{userId}
+  </select>
+  
+  <!-- 新增购物车信息并返回主键id -->
+  <insert id="insertBasketReturnId" parameterType="com.ruoyi.system.domain.YdSellerBasket" useGeneratedKeys="true" keyProperty="id">
+    insert into yd_seller_basket (user_id, total_price,
+      sale_price, goods_num, packing_expense)
+    values (#{userId,jdbcType=INTEGER}, #{totalPrice,jdbcType=DECIMAL},
+      #{salePrice,jdbcType=DECIMAL}, #{goodsNum,jdbcType=INTEGER}, #{packingExpense,jdbcType=DECIMAL})
+  </insert>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, user_id, total_price, sale_price, goods_num, packing_expense, create_time, 
+    update_time, `status`, other1, other2
+    from yd_seller_basket
+  </select>
+</mapper>

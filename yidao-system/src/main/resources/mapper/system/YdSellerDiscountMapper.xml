@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdSellerDiscountMapper">
+  <resultMap id="BaseResultMap"  type="com.ruoyi.system.domain.YdSellerDiscount">
+      <id column="id"   property="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="seller_shop_id"  property="sellerShopId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="dis_name"  property="disName" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="describe"  property="describe" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="type"  property="type" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="discount_money"  property="discountMoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="discount_condition"  property="discountCondition" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="discount_num"  property="discountNum" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="amount"  property="amount" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="start_time"  property="startTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="end_time"  property="endTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="create_time"  property="createTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="update_time"  property="updateTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="status"  property="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="other1"  property="other1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="other"  property="other" javaType="java.lang.String" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdSellerDiscount">
+    insert into yd_seller_discount (id, seller_shop_id, dis_name, 
+      `describe`, `type`, discount_money, 
+      discount_condition, discount_num, amount, 
+      start_time, end_time, create_time, 
+      update_time, `status`, other1, 
+      other)
+    values (#{id,jdbcType=INTEGER}, #{sellerShopId,jdbcType=INTEGER}, #{disName,jdbcType=VARCHAR}, 
+      #{describe,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{discountMoney,jdbcType=DECIMAL}, 
+      #{discountCondition,jdbcType=DECIMAL}, #{discountNum,jdbcType=DECIMAL}, #{amount,jdbcType=INTEGER}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{other1,jdbcType=VARCHAR}, 
+      #{other,jdbcType=VARCHAR})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, seller_shop_id, dis_name, `describe`, `type`, discount_money, discount_condition, 
+    discount_num, amount, start_time, end_time, create_time, update_time, `status`, other1, 
+    other
+    from yd_seller_discount
+  </select>
+    <!-- 查询过期优惠券 -->
+    <select id="getPastDue" resultType="java.lang.Integer">
+        <![CDATA[
+          select id from yd_seller_discount where end_time < CURDATE() and status > -1 and status < 2
+        ]]>
+    </select>
+
+    <!--  修改优惠券状态为：已过期 -->
+    <update id="updateToPastDue" parameterType="java.util.List">
+        update yd_seller_discount set status = 2
+        where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </update>
+</mapper>

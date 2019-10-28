@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdFoodDistributionInfoMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdFoodDistributionInfo">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="receiving_address" jdbcType="VARCHAR" property="receivingAddress" />
+    <result column="consignee" jdbcType="VARCHAR" property="consignee" />
+    <result column="receiving_telephone" jdbcType="VARCHAR" property="receivingTelephone" />
+    <result column="is_default" jdbcType="INTEGER" property="isDefault" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="longitude" jdbcType="VARCHAR" property="longitude" />
+    <result column="latitude" jdbcType="VARCHAR" property="latitude" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="is_beyond" property="isBeyond" />
+    <result column="other1" jdbcType="VARCHAR" property="other1" />
+    <result column="other2" jdbcType="VARCHAR" property="other2" />
+  </resultMap>
+  <!-- 新增 -->
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdFoodDistributionInfo">
+    insert into yd_food_distribution_info (user_id, receiving_address,
+      consignee, receiving_telephone, is_default, 
+      remark, longitude, latitude)
+    values (#{userId,jdbcType=INTEGER}, #{receivingAddress,jdbcType=VARCHAR},
+      #{consignee,jdbcType=VARCHAR}, #{receivingTelephone,jdbcType=VARCHAR}, #{isDefault,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR}, #{longitude,jdbcType=VARCHAR}, #{latitude,jdbcType=VARCHAR})
+  </insert>
+  <!-- 查询用户收货地址列表 -->
+  <select id="selectAll" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, user_id, receiving_address, consignee, receiving_telephone, is_default, 
+    remark, longitude, latitude
+    from yd_food_distribution_info
+    where user_id = #{userId} and status > -1
+  </select>
+  <!-- 查询用户收货地址列表（包含距离判断） -->
+  <select id="selectAllByDistance" parameterType="java.util.Map" resultMap="BaseResultMap">
+    <![CDATA[
+      select id, user_id, receiving_address, consignee, receiving_telephone, is_default,remark, longitude, latitude,(
+        CASE
+        when (
+        6371 * acos(
+        cos(radians(latitude)) * cos(radians(#{lat})) * cos(
+        radians(longitude) - radians(#{lng})
+        ) + sin(radians(latitude)) * sin(radians(#{lat}))
+        )
+        )*1000 <= #{minDistance} then 0
+        else 1
+        end
+        ) is_beyond
+      from yd_food_distribution_info
+      where user_id = #{userId} and status > -1
+    ]]>
+  </select>
+  <!-- 修改用户默认收货地址 -->
+  <update id="updateDefault" parameterType="java.lang.Integer">
+    update yd_food_distribution_info set is_default = 0 where user_id = #{userId} and is_default = 1
+  </update>
+  <!-- 修改用户收货地址信息 -->
+  <update id="update" parameterType="com.ruoyi.system.domain.YdFoodDistributionInfo">
+    update yd_food_distribution_info set receiving_address = #{receivingAddress},consignee = #{consignee},receiving_telephone = #{receivingTelephone},
+      is_default = #{isDefault},remark = #{remark},longitude = #{longitude},latitude = #{latitude}
+    where user_id = #{userId} and id = #{id}
+  </update>
+  <!-- 删除用户收货地址信息 -->
+  <delete id="delete" parameterType="java.util.Map">
+    delete from yd_food_distribution_info where id = #{id} and user_id = #{userId}
+  </delete>
+  <!-- 查询用户默认地址 -->
+  <select id="selectDefault" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, user_id, receiving_address, consignee, receiving_telephone, is_default,
+    remark, longitude, latitude
+    from yd_food_distribution_info
+    where user_id = #{userId} and is_default = 1 and status > -1
+  </select>
+  <!-- 根据地址id和用户id查询地址信息 -->
+  <select id="selectByIdAndUserId" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select id, user_id, receiving_address, consignee, receiving_telephone, is_default,
+    remark, longitude, latitude
+    from yd_food_distribution_info
+    where id = #{id} and user_id = #{userId} and status > -1
+  </select>
+</mapper>

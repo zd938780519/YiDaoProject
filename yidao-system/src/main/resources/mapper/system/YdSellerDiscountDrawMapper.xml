@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdSellerDiscountDrawMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdSellerDiscountDraw">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="discount_id" jdbcType="INTEGER" property="discountId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="draw_time" jdbcType="TIMESTAMP" property="drawTime" />
+    <result column="use_time" jdbcType="TIMESTAMP" property="useTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="other1" jdbcType="VARCHAR" property="other1" />
+    <result column="other2" jdbcType="VARCHAR" property="other2" />
+  </resultMap>
+
+  <resultMap id="VoResultMap" type="com.ruoyi.system.domain.YdSellerDiscountDraw">
+    <id column="draw_id" jdbcType="INTEGER" property="id" />
+    <result column="discount_id" jdbcType="INTEGER" property="discountId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="draw_status" property="status" />
+    <association property="discount" javaType="com.ruoyi.system.domain.YdSellerDiscount">
+      <result column="id"   property="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="seller_shop_id"  property="sellerShopId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="dis_name"  property="disName" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="describe"  property="describe" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="type"  property="type" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="discount_money"  property="discountMoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="discount_condition"  property="discountCondition" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="discount_num"  property="discountNum" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="amount"  property="amount" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="start_time"  property="startTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="end_time"  property="endTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="status" property="status" />
+    </association>
+  </resultMap>
+
+  <!-- 点击进入周边主页（查询店铺优惠券） -->
+  <select id="getDiscountByShopId" parameterType="java.util.Map" resultMap="VoResultMap">
+    select ysd.id,ysd.seller_shop_id,ysd.dis_name,ysd.discount_money,ysd.discount_condition,
+    <if test="functionType != null and functionType != ''">ysd.`describe`,ysd.type,ysd.discount_num,ysd.amount,ysd.start_time,ysd.end_time,</if>
+    ysdd.id as draw_id,ysdd.discount_id,ysdd.user_id
+    from yd_seller_discount as ysd
+    left join
+    (SELECT id,discount_id,user_id,order_id,draw_time,use_time,status from yd_seller_discount_draw
+    where user_id = #{userId}
+    and status > -1) as ysdd
+    on ysd.id = ysdd.discount_id
+    where ysd.seller_shop_id = #{shopId}
+    and ysd.`status` = 1
+    order by ysd.id
+    <if test="functionType == null or functionType == ''">limit 0,2</if>
+  </select>
+  
+  <!-- 根据金额查询可用优惠券 -->
+  <select id="getDiscountByCondition" parameterType="java.util.Map" resultMap="VoResultMap">
+    select ysd.id,ysd.seller_shop_id,ysd.dis_name,ysd.discount_money,ysd.discount_condition,ysd.`describe`,ysd.type,ysd.discount_num,ysd.amount,ysd.start_time,ysd.end_time,
+        ysdd.id as draw_id,ysdd.discount_id,ysdd.user_id from yd_seller_discount ysd,yd_seller_discount_draw ysdd where ysd.id = ysdd.discount_id
+    and seller_shop_id = #{shopId}
+    and ysdd.user_id = #{userId}
+    <![CDATA[
+    and ysd.discount_condition <= #{condition}
+    ]]>
+    and ysd.`status` = 1
+    and ysdd.`status` = 0
+    ORDER BY ysd.id asc
+  </select>
+
+  <!-- 根据id查询优惠券 -->
+  <select id="getDiscountById" parameterType="java.lang.Integer" resultMap="VoResultMap">
+    select ysd.id,ysd.seller_shop_id,ysd.dis_name,ysd.discount_money,ysd.discount_condition,ysd.`describe`,ysd.type,ysd.discount_num,ysd.amount,ysd.start_time,ysd.end_time,ysd.`status`,
+        ysdd.id as draw_id,ysdd.discount_id,ysdd.user_id,ysdd.`status` AS draw_status from yd_seller_discount ysd,yd_seller_discount_draw ysdd where ysd.id = ysdd.discount_id
+    and ysdd.id = #{id}
+  </select>
+
+  <!-- 根据用户id和优惠券id查询优惠券 -->
+  <select id="getDiscountDrawByUserIdAndDisId" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select id,discount_id,user_id,order_id,draw_time,use_time from yd_seller_discount_draw
+    where user_id = #{userId} and discount_id = #{discountId} and status > -1
+  </select>
+
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdSellerDiscountDraw">
+    insert into yd_seller_discount_draw (id, discount_id, user_id, 
+      order_id, draw_time, use_time)
+    values (#{id,jdbcType=INTEGER}, #{discountId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{orderId,jdbcType=INTEGER}, #{drawTime,jdbcType=TIMESTAMP}, #{useTime,jdbcType=TIMESTAMP})
+  </insert>
+  <!-- 使用优惠券 -->
+  <update id="update" parameterType="com.ruoyi.system.domain.YdSellerDiscountDraw">
+    update yd_seller_discount_draw
+    set order_id = #{orderId},
+      use_time = #{useTime},
+      `status` = 1
+    where id = #{id}
+  </update>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, discount_id, user_id, order_id, draw_time, use_time, create_time, update_time, 
+    `status`, other1, other2
+    from yd_seller_discount_draw
+  </select>
+
+  <!-- 将未使用的优惠券改为：已过期 -->
+  <update id="updateOfUnuserToPastDue" parameterType="java.util.List">
+    update yd_seller_discount_draw set status = 2
+    where status = 0 and discount_id in
+    <foreach collection="list" item="item" separator="," open="(" close=")">
+      #{item}
+    </foreach>
+  </update>
+</mapper>

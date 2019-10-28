@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="yidao-common" />
+        <module name="yidao-system" />
+        <module name="yidao-framework" />
+        <module name="yidao-api" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ruo-yigenerator" target="1.5" />
+      <module name="ruoyi-generator" target="1.8" />
+      <module name="ruoyi-generator (1)" target="1.8" />
+      <module name="ruoyi-quartz" target="1.8" />
+      <module name="ruoyigenerator" target="1.8" />
+      <module name="xc" target="1.8" />
+      <module name="yidao" target="1.8" />
+      <module name="yidao-api" target="1.8" />
+      <module name="yidao-common" target="1.8" />
+      <module name="yidao-framework" target="1.8" />
+      <module name="yidao-generator" target="1.8" />
+      <module name="yidao-system" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

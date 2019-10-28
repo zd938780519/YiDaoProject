@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdMallVoucherMapper">
+
+  <resultMap id="YdMallVoucherResult" type="YdMallVoucher">
+    <id     property="id" column="id" />
+    <result property="name"              column="name"          />
+    <result property="amount"            column="amount"          />
+    <result property="limitedAmount"     column="limited_amount"          />
+    <result property="integral"          column="integral"          />
+    <result property="stock"             column="stock"          />
+    <result property="instructions"      column="instructions"          />
+    <result property="type"              column="type"          />
+  </resultMap>
+
+  <insert id="insert" parameterType="YdMallVoucher" useGeneratedKeys="true" keyProperty="id">
+    insert into yd_mall_voucher (`name`, amount,
+      limited_amount, integral, stock, instructions,`type`)
+    values (#{name,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL},
+      #{limitedAmount,jdbcType=DECIMAL}, #{integral,jdbcType=INTEGER}, #{stock,jdbcType=INTEGER}, 
+      #{instructions,jdbcType=VARCHAR},#{type,jdbcType=INTEGER})
+  </insert>
+  <select id="selectAll" resultMap="YdMallVoucherResult">
+    select id, `name`, amount, limited_amount, integral, stock,`type`
+    from yd_mall_voucher
+    where `status`>-1
+    limit #{currIndex} , #{pageSize}
+  </select>
+
+  <select id="selectById" resultMap="YdMallVoucherResult" parameterType="long">
+    select id, `name`, amount, limited_amount, integral, stock, instructions,`type`
+    from yd_mall_voucher where `status`>-1 and id=#{id}
+  </select>
+
+  <update id="stockReduceOne" parameterType="long">
+    update yd_mall_voucher set stock=stock-1 where id=#{id}
+  </update>
+</mapper>

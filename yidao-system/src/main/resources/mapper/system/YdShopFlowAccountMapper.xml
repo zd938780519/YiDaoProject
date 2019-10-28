@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdShopFlowAccountMapper">
+
+  <resultMap id="YdShopFlowAccountResult" type="YdShopFlowAccount">
+    <id     property="id" column="id" />
+    <result property="shopId"         column="shop_id"        />
+    <result property="type"         column="type"        />
+    <result property="typeShow"         column="type_show"        />
+    <result property="money"         column="money"        />
+    <result property="integral"         column="integral"        />
+    <result property="orderId"         column="order_id"        />
+    <result property="createTime"   column="create_time"    />
+    <result property="updateTime"   column="update_time"    />
+    <result property="status"        column="status"         />
+    <result property="other1"        column="other1"         />
+    <result property="other2"        column="other2"         />
+  </resultMap>
+
+  <insert id="insert" parameterType="YdShopFlowAccount" useGeneratedKeys="true" keyProperty="id">
+    insert into yd_shop_flow_account
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="shopId != null  and shopId != ''  ">shop_id,</if>
+      <if test="type != null  and type != ''  ">`type`,</if>
+      <if test="typeShow != null  and typeShow != ''  ">type_show,</if>
+      <if test="money != null  and money != ''  ">money,</if>
+      <if test="integral != null  and integral != ''  ">integral,</if>
+      <if test="orderId != null  and orderId != ''  ">order_Id,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="shopId != null  and shopId != ''  ">#{shopId},</if>
+      <if test="type != null  and type != ''  ">#{type},</if>
+      <if test="typeShow != null  and typeShow != ''  ">#{typeShow},</if>
+      <if test="money != null  and money != ''  ">#{money},</if>
+      <if test="integral != null  and integral != ''  ">#{integral},</if>
+      <if test="orderId != null  and orderId != ''  ">#{orderId},</if>
+    </trim>
+
+  </insert>
+  <select id="selectAll" resultMap="YdShopFlowAccountResult">
+    select id, shop_id, `type`, type_show, money, integral,order_Id, create_time, update_time,
+    `status`, other1, other2
+    from yd_shop_flow_account where `status`>-1
+  </select>
+</mapper>

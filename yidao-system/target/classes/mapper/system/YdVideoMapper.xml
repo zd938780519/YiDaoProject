@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdVideoMapper">
+    <resultMap id="YdVideoResult" type="YdVideo">
+        <id     property="id" column="id" />
+        <result property="sellerId"            column="seller_id"            />
+        <result property="type"                 column="type"                 />
+        <result property="thumbnailPath"       column="thumbnail_path"       />
+        <result property="videoPath"           column="video_path"           />
+        <result property="score"                column="score"                />
+        <result property="wantEatNum"         column="want_eat_num"         />
+        <result property="commentNum"          column="comment_num"          />
+        <result property="forwardNum"          column="forward_num"          />
+        <result property="explanatoryText"      column="explanatory_text"      />
+        <result property="bgmName"             column="bgm_name"             />
+        <result property="totalSaleNum"       column="total_sale_num"       />
+        <result property="monthlySaleNum"     column="monthly_sale_num"     />
+        <result property="quotaNum"            column="quota_num"            />
+        <result property="originalPrice"       column="original_price"       />
+        <result property="actualPrice"         column="actual_price"         />
+        <result property="discount"             column="discount"             />
+        <result property="isSellOut"           column="is_sell_out"          />
+        <result property="supplementaryNotes"  column="supplementary_notes"  />
+        <result property="createTime"          column="create_time"          />
+        <result property="updateTime"          column="update_time"          />
+        <result property="status"               column="status"               />
+        <result property="other1"               column="other1"               />
+        <result property="other2"               column="other2"               />
+        <result property="sellerName"           column="name"               />
+        <result property="sellerPhotoPath"      column="photo_path"               />
+        <result property="isWantEat"             column="is_want_eat"               />
+    </resultMap>
+
+    <insert id="insertVideo">
+        insert into yd_video_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sellerId           != null  and sellerId           != ''  ">seller_id          ,</if>
+            <if test="type               != null  and type               != ''  ">type               ,</if>
+            <if test="thumbnailPath      != null  and thumbnailPath      != ''  ">thumbnail_path     ,</if>
+            <if test="videoPath          != null  and videoPath          != ''  ">video_path         ,</if>
+            <if test="score              != null  and score              != ''  ">score              ,</if>
+            <if test="wantEatNum         != null  and wantEatNum         != ''  ">want_eat_num       ,</if>
+            <if test="commentNum         != null  and commentNum         != ''  ">comment_num        ,</if>
+            <if test="forwardNum         != null  and forwardNum         != ''  ">forward_num        ,</if>
+            <if test="explanatoryText    != null  and explanatoryText    != ''  ">explanatory_text   ,</if>
+            <if test="bgmName            != null  and bgmName            != ''  ">bgm_name           ,</if>
+            <if test="totalSaleNum       != null  and totalSaleNum       != ''  ">total_sale_num     ,</if>
+            <if test="monthlySaleNum     != null  and monthlySaleNum     != ''  ">monthly_sale_num   ,</if>
+            <if test="quotaNum           != null  and quotaNum           != ''  ">quota_num          ,</if>
+            <if test="originalPrice      != null  and originalPrice      != ''  ">original_price     ,</if>
+            <if test="actualPrice        != null  and actualPrice        != ''  ">actual_price       ,</if>
+            <if test="discount           != null  and discount           != ''  ">discount           ,</if>
+            <if test="isSellOut          != null  and isSellOut          != ''  ">is_sell_out        ,</if>
+            <if test="supplementaryNotes != null  and supplementaryNotes != ''  ">supplementary_notes,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sellerId           != null  and sellerId           != ''  ">#{sellerId},</if>
+            <if test="type               != null  and type               != ''  ">#{type},</if>
+            <if test="thumbnailPath      != null  and thumbnailPath      != ''  ">#{thumbnailPath},</if>
+            <if test="videoPath          != null  and videoPath          != ''  ">#{videoPath},</if>
+            <if test="score              != null  and score              != ''  ">#{score},</if>
+            <if test="wantEatNum         != null  and wantEatNum         != ''  ">#{wantEatNum},</if>
+            <if test="commentNum         != null  and commentNum         != ''  ">#{commentNum},</if>
+            <if test="forwardNum         != null  and forwardNum         != ''  ">#{forwardNum},</if>
+            <if test="explanatoryText    != null  and explanatoryText    != ''  ">#{explanatoryText},</if>
+            <if test="bgmName            != null  and bgmName            != ''  ">#{bgmName},</if>
+            <if test="totalSaleNum       != null  and totalSaleNum       != ''  ">#{totalSaleNum},</if>
+            <if test="monthlySaleNum     != null  and monthlySaleNum     != ''  ">#{monthlySaleNum},</if>
+            <if test="quotaNum           != null  and quotaNum           != ''  ">#{quotaNum},</if>
+            <if test="originalPrice      != null  and originalPrice      != ''  ">#{originalPrice},</if>
+            <if test="actualPrice        != null  and actualPrice        != ''  ">#{actualPrice},</if>
+            <if test="discount           != null  and discount           != ''  ">#{discount},</if>
+            <if test="isSellOut          != null  and isSellOut          != ''  ">#{isSellOut},</if>
+            <if test="supplementaryNotes != null  and supplementaryNotes != ''  ">#{supplementaryNotes},</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteVideo">
+         delete from yd_video_info where id = #{id}
+    </delete>
+
+    <select id="selectAllVideo" resultMap="YdVideoResult">
+        select v.id,s.`name`,s.photo_path,v.thumbnail_path,v.want_eat_num,vu.is_want_eat from yd_video_info v
+        inner join yd_seller s on v.seller_id=s.pk_id and s.type=1
+        left join yd_video_user_relation vu on v.id=vu.video_id and vu.`status`>-1 and vu.user_id=#{userId}
+        where v.`status`>-1 and s.`status`>- 1
+        and not EXISTS (SELECT 1 FROM yd_shield_info si WHERE si.from_id=#{userId} and v.seller_id=si.to_id)
+        order by v.want_eat_num desc
+        limit #{currIndex} , #{pageSize}
+    </select>
+
+    <select id="selectVideoByUserId" resultMap="YdVideoResult">
+        select v.id,v.thumbnail_path,v.want_eat_num,v.total_sale_num,vu.is_want_eat
+        from yd_video_info v
+        inner join yd_seller s on v.seller_id=s.pk_id and s.type=1
+        left join yd_video_user_relation vu on v.id=vu.video_id and vu.`status`>-1 and vu.user_id=#{userId}
+        where v.`status`>-1 and s.`status`>- 1 and v.seller_id=#{sellerId} order by v.want_eat_num desc
+        limit #{currIndex} , #{pageSize}
+    </select>
+
+    <select id="selectVideoById" parameterType="long" resultMap="YdVideoResult">
+        select v.seller_id,v.video_path,s.photo_path,vu.is_want_eat,v.want_eat_num,v.comment_num,v.forward_num,s.name,v.explanatory_text,v.bgm_name,v.score
+        from yd_video_info v
+        inner join yd_seller s on v.seller_id=s.pk_id and s.type=1
+        left join yd_video_user_relation vu on v.id=vu.video_id and vu.`status`>-1 and v.id=#{videoId}
+        where v.`status`>-1 and s.`status`>-1  order by v.want_eat_num desc
+    </select>
+
+    <update id="updateCommentNum" parameterType="YdVideo">
+        update yd_video_info set comment_num=comment_num+#{commentNum} where id=#{id}
+    </update>
+
+    <update id="updateInfo" parameterType="YdVideo">
+        update yd_video_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="thumbnailPath != null  and thumbnailPath != ''  ">thumbnail_path = #{thumbnailPath},</if>
+            <if test="videoPath != null  and videoPath != ''  ">video_path = #{videoPath},</if>
+            <if test="score != null  and score != ''  ">score = #{score},</if>
+            <if test="wantEatNum != null  and wantEatNum != ''  ">want_eat_num = #{wantEatNum},</if>
+            <if test="commentNum != null  and commentNum != ''  ">comment_num = #{commentNum},</if>
+            <if test="forwardNum != null  and forwardNum != ''  ">forward_num = #{forwardNum},</if>
+            <if test="explanatoryText != null  and explanatoryText != ''  ">explanatory_text = #{explanatoryText},</if>
+            <if test="bgmName != null  and bgmName != ''  ">bgm_name = #{bgmName},</if>
+            <if test="totalSaleNum != null  and totalSaleNum != ''  ">total_sale_num = #{totalSaleNum},</if>
+            <if test="monthlySaleNum != null  and monthlySaleNum != ''  ">monthly_sale_num = #{monthlySaleNum},</if>
+            <if test="quotaNum != null  and quotaNum != ''  ">quota_num = #{quotaNum},</if>
+            <if test="originalPrice != null  and originalPrice != ''  ">original_price = #{originalPrice},</if>
+            <if test="actualPrice != null  and actualPrice != ''  ">actual_price = #{actualPrice},</if>
+            <if test="discount != null  and discount != ''  ">discount = #{discount},</if>
+            <if test="isSellOut != null  and isSellOut != ''  ">is_sell_out = #{isSellOut},</if>
+            <if test="supplementaryNotes != null  and supplementaryNotes != ''  ">supplementary_notes = #{supplementaryNotes},</if>
+        </trim>
+        where id=#{id}
+    </update>
+
+    <update id="updateWantEatNum" parameterType="YdVideo">
+        update yd_video_info set want_eat_num = want_eat_num + #{wantEatNum} where id = #{id}
+    </update>
+
+
+    <update id="addForwardNum" parameterType="long">
+        update yd_video_info set forward_num = forward_num+1 where id = #{id}
+    </update>
+
+
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdVideoUserMapper">
+    <resultMap id="YdVideoUserResult" type="YdVideoUser">
+        <id     property="id" column="id" />
+        <result property="videoId"      column="video_id"       />
+        <result property="userId"       column="user_id"        />
+        <result property="isCollection" column="is_collection"  />
+        <result property="isWantEat"   column="is_want_eat"    />
+        <result property="isForward"    column="is_forward"    />
+        <result property="createTime"   column="create_time"    />
+        <result property="updateTime"   column="update_time"    />
+        <result property="status"        column="status"         />
+        <result property="other1"        column="other1"         />
+        <result property="other2"        column="other2"         />
+    </resultMap>
+
+    <select id="selectInfoById" parameterType="YdVideoUser" resultMap="YdVideoUserResult">
+        select * from yd_video_user_relation where video_id=#{videoId} and user_id=#{userId} and status>-1
+    </select>
+
+    <insert id="insertInfo" parameterType="YdVideoUser" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_video_user_relation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="videoId != null  and videoId != ''  ">video_id,</if>
+            <if test="userId != null  and userId != ''  ">user_id,</if>
+            <if test="isWantEat != null  and isWantEat != ''  ">is_want_eat,</if>
+            <if test="isCollection != null  and isCollection != ''  ">is_collection,</if>
+            <if test="isForward != null  and isForward != ''  ">is_forward,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="videoId != null  and videoId != ''  ">#{videoId},</if>
+            <if test="userId != null  and userId != ''  ">#{userId},</if>
+            <if test="isWantEat != null  and isWantEat != ''  ">#{isWantEat},</if>
+            <if test="isCollection != null  and isCollection != ''  ">#{isCollection},</if>
+            <if test="isForward != null  and isForward != ''  ">#{isForward},</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteInfo" parameterType="YdVideoUser">
+        delete from yd_video_user_relation where video_id=#{videoId} and user_id=#{userId}
+    </delete>
+
+    <delete id="deleteInfoByVideoId" parameterType="long">
+        delete from yd_video_user_relation where video_id=#{videoId}
+    </delete>
+
+    <delete id="deleteInfoByUserId" parameterType="long">
+        delete from yd_video_user_relation where  user_id=#{userId}
+    </delete>
+
+    <update id="updateInfo" parameterType="YdVideoUser">
+        update yd_video_user_relation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isCollection != null  and isCollection != ''  ">is_Collection = #{isCollection},</if>
+            <if test="isWantEat != null  and isWantEat != ''  ">is_Want_Eat = #{isWantEat},</if>
+            <if test="isForward != null  and isForward != ''  ">is_Forward = #{isForward},</if>
+        </trim>
+        where video_id=#{videoId} and user_id=#{userId}
+    </update>
+
+
+
+
+
+
+
+
+
+</mapper>

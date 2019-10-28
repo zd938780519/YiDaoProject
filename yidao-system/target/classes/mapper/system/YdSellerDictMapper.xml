@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdSellerDictMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdSellerDict">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="is_default" jdbcType="INTEGER" property="isDefault" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+  </resultMap>
+  <!-- 根据id和类型查询字典信息 -->
+  <select id="getByIdAndType" parameterType="java.util.Map" resultType="java.lang.String">
+    SELECT `value`
+    FROM
+      yd_seller_dict
+    where status = 0
+    and type = #{type}
+    and id in
+    <foreach collection="ids" item="item" separator="," open="(" close=")">
+      #{item}
+    </foreach>
+    ORDER BY sort asc
+  </select>
+
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdSellerDict">
+    insert into yd_seller_dict (id, `type`, sort,
+      is_default, `value`, create_time, 
+      update_time, `status`)
+    values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, 
+      #{isDefault,jdbcType=INTEGER}, #{value,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, `type`, sort, is_default, `value`, create_time, update_time, `status`
+    from yd_seller_dict
+  </select>
+</mapper>

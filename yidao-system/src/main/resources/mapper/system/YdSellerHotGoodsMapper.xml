@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdSellerHotGoodsMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdSellerHotGoods">
+    <id column="id" property="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="seller_shop_id" property="sellerShopId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="is_popular" property="isPopular" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="is_combo" property="isCombo" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="is_take_out" property="isTakeOut" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="hot_name" property="hotName" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="brief" property="brief" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="details" property="details" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="original_price" property="originalPrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+    <result column="discount" property="discount" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+    <result column="integral_limit" property="integralLimit" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+    <result column="integral_price" property="integralPrice" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="photo_path" property="photoPath" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="video_path" property="videoPath" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="sale_price" property="salePrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+    <result column="read_count" property="readCount" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="sell_count_month" property="sellCountMonth" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="sell_count" property="sellCount" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="like_num" property="likeNum" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="comment_num" property="commentNum" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="shelf_time" property="shelfTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+    <result column="main_ingredient" property="mainIngredient" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="ingredient" property="ingredient" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="creation_method" property="creationMethod" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="flavor" property="flavor" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="packing_expense" property="packingExpense" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+    <result column="combo_goods" property="comboGoods" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="combo_start_time" property="comboStartTime"/>
+    <result column="combo_end_time" property="comboEndTime"/>
+    <result column="combo_time_on" property="comboTimeOn"/>
+    <result column="combo_time_off" property="comboTimeOff"/>
+    <result column="combo_remark" property="comboRemark"/>
+    <result column="stored_count" property="storedCount" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="other1" property="other1" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="other2" property="other2" javaType="java.lang.String" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="VoResultMap" type="com.ruoyi.system.domain.YdSellerHotGoods">
+    <id column="id" property="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="seller_shop_id" property="sellerShopId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="hot_name" property="hotName" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="brief" property="brief" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="original_price" property="originalPrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+    <result column="discount" property="discount" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+    <result column="integral_limit" property="integralLimit" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+    <result column="integral_price" property="integralPrice" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="photo_path" property="photoPath" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="video_path" property="videoPath" javaType="java.lang.String" jdbcType="VARCHAR" />
+    <result column="sale_price" property="salePrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+    <result column="sell_count" property="sellCount" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <result column="stored_count" property="storedCount" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    <association property="ydSellerShop" javaType="com.ruoyi.system.domain.YdSellerShop">
+      <result column="shop_name" property="shopName" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="logo" property="logo" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="other_logo" property="otherLogo" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="address" property="address" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="longitude" property="longitude" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="latitude" property="latitude" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="is_take_out" property="isTakeOut" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="start_money" property="startMoney" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="phone" property="phone" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="time_on" property="timeOn" javaType="java.util.Date" jdbcType="TIME" />
+      <result column="time_off" property="timeOff" javaType="java.util.Date" jdbcType="TIME" />
+      <result column="is_activity" property="isActivity" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="lable_any_time" property="lableAnyTime" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="lable_free_appiontment" property="lableFreeAppiontment" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="lable_health" property="lableHealth" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="lable_real_name" property="lableRealName" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="rate_of_acclaim" property="rateOfAcclaim" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+    </association>
+  </resultMap>
+    <!--视频点击进入周边主页（根据商品id查询商品和店铺信息）-->
+  <select id="getShopAndGoodByGoodId" parameterType="java.lang.Integer" resultMap="VoResultMap">
+    select ushg.id,ushg.seller_shop_id,ushg.hot_name,ushg.brief,ushg.original_price,ushg.discount,ushg.integral_limit,ushg.integral_price,ushg.photo_path,ushg.video_path,ushg.sale_price,ushg.sell_count,ushg.stored_count,
+      yss.shop_name,yss.logo,yss.other_logo,yss.address,yss.longitude,yss.latitude,yss.is_take_out,yss.start_money,yss.phone,yss.time_on,yss.time_off,yss.is_activity,yss.lable_any_time,yss.lable_free_appiontment,
+      yss.lable_health,yss.lable_real_name,yss.rate_of_acclaim
+    from yd_seller_shop as yss
+    INNER JOIN yd_seller_hot_goods as ushg
+    on yss.id = ushg.seller_shop_id
+    where ushg.id = #{id}
+    and ushg.`status` > -1 and yss.`status` > -1
+  </select>
+  <!-- 根据商品id查询商品和店铺信息 -->
+  <select id="getInfoByGoodId" parameterType="java.lang.Integer" resultMap="VoResultMap">
+    SELECT
+      yss.shop_name,yss.logo,yss.address,yss.longitude,yss.latitude,yss.is_take_out,
+      yshg.id,yshg.seller_shop_id,yshg.hot_name,yshg.is_combo,yshg.brief,yshg.details,
+      yshg.original_price,yshg.discount,yshg.integral_limit,yshg.integral_price,yshg.photo_path,
+      yshg.video_path,yshg.sale_price,yshg.sell_count,yshg.like_num,yshg.comment_num,yshg.shelf_time,
+      yshg.main_ingredient,yshg.ingredient,yshg.creation_method,yshg.flavor,yshg.packing_expense,
+      yshg.combo_goods,yshg.combo_start_time,yshg.combo_end_time,yshg.combo_time_on,
+      yshg.combo_time_off,yshg.combo_remark,yshg.stored_count
+    FROM yd_seller_shop AS yss
+    INNER JOIN yd_seller_hot_goods AS yshg ON yss.id = yshg.seller_shop_id
+    WHERE yshg.id = 1 AND yshg.`status` > -1
+  </select>
+    <!--根据商品id查询商品信息-->
+  <select id="getGoodById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, seller_shop_id, is_popular, is_combo, is_take_out, hot_name, brief, details,
+      original_price, discount, integral_limit, integral_price, photo_path, video_path,
+      sale_price, read_count, sell_count_month, sell_count, like_num, comment_num, shelf_time,
+      main_ingredient, ingredient, creation_method, flavor, packing_expense, combo_goods,
+      combo_start_time,combo_end_time,combo_time_on,combo_time_off,combo_remark, stored_count
+    from yd_seller_hot_goods
+    where id = #{id}
+    and status > -1
+   </select>
+  
+  <!-- 搜索框检索商品 -->
+  <select id="searchGoods" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select id,seller_shop_id,is_combo,hot_name,brief,original_price,discount,sale_price,photo_path from yd_seller_hot_goods
+    where seller_shop_id = #{shopId}
+    and hot_name like CONCAT('%',CONCAT(#{searchName},'%'))
+    and `status` > -1
+    limit #{currIndex},#{pageSize}
+  </select>
+
+  <!-- 批量更新商品总销量数据 -->
+  <update id="updateOfBatchForSellerCount" parameterType="java.util.List">
+    update yd_seller_hot_goods
+    SET sell_count = CASE id
+    <foreach collection="list" item="item">
+      WHEN #{item.id} THEN sell_count + #{item.sellerCount}
+    </foreach>
+    END
+    where id in
+    <foreach collection="list" item="item" open="(" close=")" separator=",">
+      #{item.id}
+    </foreach>
+  </update>
+
+  <!-- 批量更新商品点赞数据 -->
+  <update id="updateOfBatchForLikeCount" parameterType="java.util.List">
+    update yd_seller_hot_goods
+      set like_num = like_num +1
+    where id in
+    <foreach collection="list" item="item" open="(" close=")" separator=",">
+      #{item}
+    </foreach>
+  </update>
+
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdSellerHotGoods">
+    insert into yd_seller_hot_goods (id, seller_shop_id, is_popular, 
+      is_combo, is_take_out, hot_name, 
+      brief, details, original_price, 
+      discount, integral_limit, integral_price, 
+      photo_path, video_path, sale_price, 
+      read_count, sell_count_month, sell_count, 
+      like_num, comment_num, shelf_time, 
+      main_ingredient, ingredient, creation_method, 
+      flavor, packing_expense, combo_goods, 
+      stored_count, create_time,
+      update_time, `status`, other1, 
+      other2)
+    values (#{id,jdbcType=INTEGER}, #{sellerShopId,jdbcType=INTEGER}, #{isPopular,jdbcType=INTEGER}, 
+      #{isCombo,jdbcType=INTEGER}, #{isTakeOut,jdbcType=INTEGER}, #{hotName,jdbcType=VARCHAR}, 
+      #{brief,jdbcType=VARCHAR}, #{details,jdbcType=VARCHAR}, #{originalPrice,jdbcType=DECIMAL}, 
+      #{discount,jdbcType=DECIMAL}, #{integralLimit,jdbcType=DECIMAL}, #{integralPrice,jdbcType=INTEGER}, 
+      #{photoPath,jdbcType=VARCHAR}, #{videoPath,jdbcType=VARCHAR}, #{salePrice,jdbcType=DECIMAL}, 
+      #{readCount,jdbcType=INTEGER}, #{sellCountMonth,jdbcType=INTEGER}, #{sellCount,jdbcType=INTEGER}, 
+      #{likeNum,jdbcType=INTEGER}, #{commentNum,jdbcType=INTEGER}, #{shelfTime,jdbcType=TIMESTAMP}, 
+      #{mainIngredient,jdbcType=VARCHAR}, #{ingredient,jdbcType=VARCHAR}, #{creationMethod,jdbcType=VARCHAR}, 
+      #{flavor,jdbcType=VARCHAR}, #{packingExpense,jdbcType=DECIMAL}, #{comboGoods,jdbcType=VARCHAR}, 
+      #{storedCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+      #{updateTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{other1,jdbcType=VARCHAR}, 
+      #{other2,jdbcType=VARCHAR})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, seller_shop_id, is_popular, is_combo, is_take_out, hot_name, brief, details, 
+    original_price, discount, integral_limit, integral_price, photo_path, video_path, 
+    sale_price, read_count, sell_count_month, sell_count, like_num, comment_num, shelf_time, 
+    main_ingredient, ingredient, creation_method, flavor, packing_expense, combo_goods, 
+    stored_count, create_time, update_time, `status`, other1, other2
+    from yd_seller_hot_goods
+  </select>
+</mapper>

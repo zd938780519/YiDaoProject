@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdRuralFlavorCommentMapper">
+
+    <resultMap id="YdRuralFlavorCommentResult" type="YdRuralFlavorComment">
+        <id     property="id" column="id" />
+        <result property="commentType"    column="comment_type"    />
+        <result property="commentObject"  column="comment_object"  />
+        <result property="heatNum"        column="heat_num"        />
+        <result property="userId"         column="user_id"         />
+        <result property="name"            column="name"            />
+        <result property="photoPath"      column="photo_path"      />
+        <result property="content"         column="content"         />
+        <result property="time"            column="time"            />
+        <result property="replyNum"       column="reply_num"       />
+        <result property="createTime"     column="create_time"     />
+        <result property="updateTime"     column="update_time"     />
+        <result property="status"          column="status"          />
+        <result property="other1"          column="other1"          />
+        <result property="other2"          column="other2"          />
+    </resultMap>
+    <resultMap id="YdRuralFlavorCommentUserResult" type="YdRuralFlavorCommentUser">
+        <id     property="id" column="id" />
+        <result property="rfcId"    column="rfc_id"    />
+        <result property="userId"  column="user_id"  />
+        <result property="createTime"     column="create_time"     />
+        <result property="updateTime"     column="update_time"     />
+        <result property="status"          column="status"          />
+        <result property="other1"          column="other1"          />
+        <result property="other2"          column="other2"          />
+    </resultMap>
+
+
+    <select id="selectCommentNumById" parameterType="long" resultType="Integer">
+        select comment_num from yd_rural_flavor where id=#{rfId} and status > - 1
+    </select>
+
+    <select id="selectCommentInfoById" parameterType="YdRuralFlavorComment" resultMap="YdRuralFlavorCommentResult">
+        select rfc.`id`,rfc.`name`,rfc.photo_path,rfc.content,rfc.time,rfc.reply_num,rfcu.is_fabulous
+        from yd_rural_flavor_comment rfc
+        left join yd_rural_flavor_comment_user_relation rfcu on rfc.id=rfcu.rfc_id and rfcu.user_id = #{userId} and rfcu.status > - 1
+        left join yd_user u on u.id=rfcu.user_id and u.status > - 1
+        where rfc.comment_object = #{commentObject} and comment_type = #{commentType} and rfc.status > - 1
+    </select>
+
+    <select id="selectCommentById"  parameterType="long" resultMap="YdRuralFlavorCommentResult">
+        select * from yd_rural_flavor_comment where id = #{id} and status > - 1
+    </select>
+
+    <select id="selectCommentInfoByIdToDelete"  resultMap="YdRuralFlavorCommentResult">
+        select id from yd_rural_flavor_comment where comment_object = #{id} and comment_type = #{type} and status > - 1
+    </select>
+
+    <insert id="insertComment" parameterType="YdRuralFlavorComment" useGeneratedKeys="true" keyProperty="id">
+        INSERT into yd_rural_flavor_comment (comment_type,comment_object,user_id,`name`,photo_path,content)
+         values (#{commentType},#{commentObject},#{userId},#{name},#{photoPath},#{content})
+    </insert>
+
+    <delete id="deleteCommentByIds" >
+        delete from yd_rural_flavor_comment where id in ${ids}
+    </delete>
+
+    <update id="updateCommentReplyNum" parameterType="YdRuralFlavorComment">
+        update yd_rural_flavor_comment set reply_num=reply_num+#{replyNum} where id=#{id}
+    </update>
+
+    <delete id="deleteCommentUserRelation">
+         delete from yd_rural_flavor_comment_user_relation where rfc_id in ${ids}
+    </delete>
+
+    <delete id="deleteAtUserInfo">
+        delete from  yd_rural_flavor_comment_at_user where rfc_id in ${ids}
+    </delete>
+
+    <insert id="fabulousComment" parameterType="YdRuralFlavorCommentUser" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_rural_flavor_comment_user_relation (user_id,rfc_id,is_fabulous) values (#{userId},#{rfcId},1)
+    </insert>
+
+    <delete id="deleteFabulous" parameterType="YdRuralFlavorCommentUser">
+        delete from yd_rural_flavor_comment_user_relation where user_id = #{userId} and rfc_id = #{rfcId}
+    </delete>
+
+    <update id="updateCommentHeatNum" parameterType="YdRuralFlavorComment">
+        update yd_rural_flavor_comment set heat_num = heat_num + #{heatNum} where id = #{id}
+    </update>
+
+
+
+</mapper>

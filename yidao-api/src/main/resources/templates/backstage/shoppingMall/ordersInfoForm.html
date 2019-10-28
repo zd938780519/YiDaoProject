@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <th:block th:include="include :: header('订单详情')" />
+    <style type="text/css">
+        .info{
+            height: 100%;
+            position: relative;
+            top: 50%;
+            transform: translateY(42%);
+        }
+        .theadTr{
+            background-color: #EFF3F8;
+        }
+        .infoImg{
+            height: 17px;
+            width: 17px;
+        }
+    </style>
+</head>
+<body>
+<div class="form-content">
+    <form id="form-user-add" class="form-horizontal">
+        <h4><i class="fa fa-tag"></i> 基本信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">订单编号：</label>
+                    <div class="col-sm-8 info">
+                        <span class="orderFormNum"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">用户名：</label>
+                    <div class="col-sm-8 info">
+                        <span class="userName"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">物流单号：</label>
+                    <div class="col-sm-8 info">
+                        <span class="freightBillNo"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">支付方式：</label>
+                    <div class="col-sm-8 info">
+                        <span class="payWayShow"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">配送方式：</label>
+                    <div class="col-sm-8 info">
+                        <span class="distributionModeShow"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">备注：</label>
+                    <div class="col-sm-8">
+                        <input name="remark" placeholder="请输入备注" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4><i class="fa fa-tag"></i> 发票信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">发票类型：</label>
+                    <div class="col-sm-8 info">
+                        <span class="invoiceTypeShow"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">发票抬头：</label>
+                    <div class="col-sm-8 info">
+                        <span class="invoicePayableTypeShow"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">发票内容：</label>
+                    <div class="col-sm-8 info">
+                        <span class="invoiceContentTypeShow"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">收票人信息：</label>
+                    <div class="col-sm-8 info">
+                        <span class="invoiceReceiverInfo"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4><i class="fa fa-tag"></i> 收货人信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">收货人：</label>
+                    <div class="col-sm-8 info">
+                        <span class="consignee"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">手机号：</label>
+                    <div class="col-sm-8 info">
+                        <span class="receivingTelephone"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">邮政编码：</label>
+                    <div class="col-sm-8 info">
+                        <span class="zipCode"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">收货地址：</label>
+                    <div class="col-sm-8 info">
+                        <span class="receivingAddress"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4><i class="fa fa-tag"></i> 商品信息</h4>
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="bootstrap-table" data-mobile-responsive="true" class="table table-hover">
+                    <thead>
+                        <tr class="theadTr">
+                            <th style="" data-field="0" tabindex="0"><div class="th-inner ">商品图片</div></th>
+                            <th style="" data-field="0" tabindex="0"><div class="th-inner ">商品名称</div></th>
+                            <th style="" data-field="0" tabindex="0"><div class="th-inner ">价格</div></th>
+                            <th style="" data-field="0" tabindex="0"><div class="th-inner ">简介</div></th>
+                            <th style="" data-field="0" tabindex="0"><div class="th-inner ">数量</div></th>
+                            <th style="" data-field="0" tabindex="0"><div class="th-inner ">小计</div></th>
+                        </tr>
+                    </thead>
+                    <tbody class="goodsInfos">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <h4><i class="fa fa-tag"></i> 费用信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">商品合计：</label>
+                    <div class="col-sm-8 info">
+                        <span class="totalMoney"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">运费：</label>
+                    <div class="col-sm-8 info">
+                        <span class="freightMoney"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">积分抵扣：</label>
+                    <div class="col-sm-8 info">
+                        <span class="integralMoney"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">折扣金额：</label>
+                    <div class="col-sm-8 info">
+                        <span class="discountAmount"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">订单总金额：</label>
+                    <div class="col-sm-8 info">
+                        <span class="totalPrice"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">应付款金额：</label>
+                    <div class="col-sm-8">
+                        <input name="amountPayable" placeholder="请输入应付款金额" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="orderId" />
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    //订单id
+    var shopId = getQueryString("shopId");
+    var orderId = getQueryString("orderId");
+
+    var prefix = ctx + "yd/backstage/shopping/orders";
+    $(function() {
+        $("input[name=\"orderId\"]").val(orderId);
+        initInfo();
+    });
+
+    function initInfo(){
+        $.ajax({
+            type: "POST",
+            url:  prefix + "/getOrderInfo",
+            data: "orderId="+orderId,
+            dataType: "json",
+            success: function(data){
+                var status = data.status;
+                if(status == 1 || status == "1"){
+                    var orderInfo = data.order;
+                    $(".orderFormNum").html(orderInfo.orderFormNum);
+                    $(".userName").html(orderInfo.userName);
+                    $(".payWayShow").html(orderInfo.payWayShow);
+                    $(".distributionModeShow").html(orderInfo.distributionModeShow==null?"":"未发货");
+                    $(".freightBillNo").html(orderInfo.freightBillNo==null?"":"未发货");
+                    $(".invoiceTypeShow").html(orderInfo.invoiceTypeShow);
+                    $(".invoicePayableTypeShow").html(orderInfo.invoicePayableTypeShow);
+                    $(".invoiceContentTypeShow").html(orderInfo.invoiceContentTypeShow);
+                    $(".invoiceReceiverInfo").html(orderInfo.invoiceReceiverPhone + " | " + orderInfo.invoiceReceiverEmail);
+                    $(".consignee").html(orderInfo.consignee);
+                    $(".receivingTelephone").html(orderInfo.receivingTelephone);
+                    $(".zipCode").html(orderInfo.zipCode);
+                    $(".receivingAddress").html(orderInfo.receivingAddress);
+                    //$(".totalMoney").html(orderInfo.totalMoney);
+                    $(".freightMoney").html(fomatFloat(orderInfo.freightMoney,2));
+                    $(".integralMoney").html(fomatFloat(orderInfo.integralMoney,2));
+                   // $(".discountAmount").html(orderInfo.discountAmount);
+                    $(".totalPrice").html(fomatFloat(orderInfo.totalPrice,2));
+                    $("input[name=\"amountPayable\"]").val(fomatFloat(orderInfo.amountPayable,2));
+                    $("input[name=\"remark\"]").val(orderInfo.remark);
+                    var goodsInfo = data.goods;
+                    var goodsHtml = "";
+                    var totalMoney = 0;
+                    var discountAmount = 0;
+                    for(var i=0;i<goodsInfo.length;i++){
+                        var tm=fomatFloat(((goodsInfo[i].goodsUnitPrice*100) * (goodsInfo[i].goodsCount*100))/10000,2);
+                        totalMoney+=tm!=false?parseFloat(tm):0;
+                        var da =fomatFloat((((100-goodsInfo[i].discount*100)*(goodsInfo[i].salePrice*100))*(goodsInfo[i].goodsCount*100))/1000000,2);
+                        discountAmount+=da!=false?parseFloat(da):0;
+                        goodsHtml+="<tr>";
+                        //TODO 以后要更改图片存储服务器地址
+                        goodsHtml+="    <td><img class='infoImg' src=\"https://yd-2019-test.oss-cn-shanghai.aliyuncs.com/"+goodsInfo[i].photoPath+"\" class=\"goodsPhoto\" /></td>      ";
+                        goodsHtml+="    <td><span class=\"goodsName\">"+goodsInfo[i].name+"</span></td>      ";
+                        goodsHtml+="    <td><span class=\"goodsPrice\">"+goodsInfo[i].goodsUnitPrice+"</span></td>      ";
+                        goodsHtml+="    <td><span class=\"goodsBriefInfo\">"+goodsInfo[i].brief+"</span></td>";
+                        goodsHtml+="    <td><span class=\"goodsNum\">"+goodsInfo[i].goodsCount+"</span></td>          ";
+                        goodsHtml+="    <td><span class=\"goodsMoney\">"+tm+"</span></td>      ";
+                        goodsHtml+="</tr>";
+                    }
+                    $(".goodsInfos").html(goodsHtml);
+                    $(".totalMoney").html(fomatFloat(totalMoney,2));
+                    $(".discountAmount").html(fomatFloat(discountAmount,2));
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

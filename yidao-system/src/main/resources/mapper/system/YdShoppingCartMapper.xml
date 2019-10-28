@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdShoppingCartMapper">
+    <resultMap id="YdShoppingCartResult" type="YdShoppingCart">
+        <id     property="id" column="id" />
+        <result property="userId"    column="user_id"    />
+        <result property="totalPrice"    column="total_price"    />
+        <result property="createTime"     column="create_time"     />
+        <result property="updateTime"     column="update_time"     />
+        <result property="status"          column="status"          />
+        <result property="other1"          column="other1"          />
+        <result property="other2"          column="other2"          />
+    </resultMap>
+
+    <select id="selectShoppingCart" parameterType="long" resultMap="YdShoppingCartResult">
+        select * from yd_shop_basket where user_id=#{userId}
+    </select>
+
+    <insert id="insertShoppingCart"  parameterType="YdShoppingCart" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_shop_basket (user_id) values (#{userId})
+    </insert>
+
+</mapper>

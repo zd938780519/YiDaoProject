@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('举报个人汇总')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-table" data-mobile-responsive="true"></table>
+		</div>
+	</div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+	var prefix = ctx + "yd/backstage/report/personal";
+	var datas1 = [[${@dict.getType('yd_report_handle_type')}]];
+	var datas2 = [[${@dict.getType('yd_account_status')}]];
+	$(function() {
+		var options = {
+			url: prefix + "/list",
+			showFooter: true,
+			showSearch: false,
+			showRefresh: false,
+			showToggle: false,
+			showColumns: false,
+			columns: [
+				{
+					title : '编号',
+					formatter: function(value, row, index) {
+						return index+1;
+					}
+				},
+				{
+					field : 'id',
+					title : 'id'
+				},
+				{
+					field : 'fromId',
+					title : '举报者id'
+				},
+				{
+					field : 'fname',
+					title : '举报者名称'
+				},
+				{
+					field : 'toId',
+					title : '被被举报者id'
+				},
+				{
+					field : 'name',
+					title : '被举报者名称'
+				},
+				{
+					field : 'reportReason',
+					title : '举报理由'
+				},
+				{
+					title: '图片',
+					formatter: function(value, row, index) {
+						//TODO 以后要换成我们自己的服务器地址
+                        return $.table.imageViews(row.images, 'https://yd-2019-test.oss-cn-shanghai.aliyuncs.com/');
+					}
+				},
+				{
+					field: 'processingStatus',
+					title: '处理状态',
+					formatter: function(value, row, index) {
+						return $.table.selectDictLabel(datas1, value);
+					}
+				},
+				{
+					field : 'accountStatus',
+					title : '账号状态',
+					formatter: function(value, row, index) {
+						return $.table.selectDictLabel(datas2, value);
+					}
+				},
+				{
+					field : 'num',
+					title : '已警告次数'
+				},
+				{
+					field : 'content',
+					title : '申诉内容'
+				},
+				{
+					field : 'createTime',
+					title : '举报时间'
+				},
+				{
+					title: '操作',
+					align: 'center',
+					formatter: function(value, row, index) {
+						var actions = [];
+						if(row.processingStatus == 1){
+							actions.push('<a class="btn btn-warning btn-xs" href="#" onclick="warning('+row.id+')"><i class="fa fa-exclamation-triangle"></i> 警告</a> ');
+						}
+						if(row.processingStatus == 1 || row.processingStatus == 2){
+							actions.push('<a class="btn btn-danger btn-xs" href="#" onclick="prohibition('+row.id+','+row.toId+')"><i class="fa fa-remove"></i> 封号</a> ');
+						}
+						if(row.processingStatus == 3){
+							actions.push('<a class="btn btn-success btn-xs" href="#" onclick="relieveProhibition('+row.id+','+row.toId+')"><i class="fa fa-edit"></i> 解封</a> ');
+						}
+						if(row.processingStatus != 3){
+							actions.push('<a class="btn btn-info btn-xs" href="#" onclick="remove('+row.id+')"><i class="fa fa-check"></i> 删除</a> ');
+						}
+						return actions.join('');
+					}
+				}]
+		};
+		$.table.init(options);
+	});
+
+
+	function warning(id) {
+		$.ajax({
+			type: "POST",
+			url:  prefix + "/warning",
+			data: "id="+id,
+			dataType: "json",
+			success: function(data){
+				var status = data.status;
+				if(status == 1 || status == "1"){
+					$.modal.msgSuccess("警告成功！");
+					$.table.refresh();
+				}else{
+					$.modal.msgError("警告失败");
+				}
+			}
+		});
+	}
+
+	function prohibition(id,toId) {
+		$.ajax({
+			type: "POST",
+			url:  prefix + "/prohibition",
+			data: "id="+id+"&toId="+toId,
+			dataType: "json",
+			success: function(data){
+				var status = data.status;
+				if(status == 1 || status == "1"){
+					$.modal.msgSuccess("封号成功！");
+					$.table.refresh();
+				}else{
+					$.modal.msgError("封号失败");
+				}
+			}
+		});
+	}
+
+	function relieveProhibition(id,toId) {
+		$.ajax({
+			type: "POST",
+			url:  prefix + "/relieveProhibition",
+			data: "id="+id+"&toId="+toId,
+			dataType: "json",
+			success: function(data){
+				var status = data.status;
+				if(status == 1 || status == "1"){
+					$.modal.msgSuccess("解封成功！");
+					$.table.refresh();
+				}else{
+					$.modal.msgError("解封失败");
+				}
+			}
+		});
+	}
+
+	function remove(id) {
+		$.ajax({
+			type: "POST",
+			url:  prefix + "/remove",
+			data: "id="+id,
+			dataType: "json",
+			success: function(data){
+				var status = data.status;
+				if(status == 1 || status == "1"){
+					$.modal.msgSuccess("删除成功！");
+					$.table.refresh();
+				}else{
+					$.modal.msgError("删除失败");
+				}
+			}
+		});
+	}
+</script>
+</body>
+</html>

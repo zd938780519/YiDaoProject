@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdFoodOrderMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdFoodOrder">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="seller_id" jdbcType="INTEGER" property="sellerId" />
+    <result column="order_num" jdbcType="BIGINT" property="orderNum" />
+    <result column="estimated_service_time" jdbcType="TIMESTAMP" property="estimatedServiceTime" />
+    <result column="actual_service_time" jdbcType="TIMESTAMP" property="actualServiceTime" />
+    <result column="packing_fee" jdbcType="DECIMAL" property="packingFee" />
+    <result column="distribution_fee" jdbcType="DECIMAL" property="distributionFee" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="tableware_num" jdbcType="INTEGER" property="tablewareNum" />
+    <result column="coupon_money" jdbcType="DECIMAL" property="couponMoney" />
+    <result column="activity_money" jdbcType="DECIMAL" property="activityMoney" />
+    <result column="integral_money" jdbcType="DECIMAL" property="integralMoney" />
+    <result column="total_integral" jdbcType="INTEGER" property="totalIntegral" />
+    <result column="amount_payable" jdbcType="DECIMAL" property="amountPayable" />
+    <result column="total_amount" jdbcType="DECIMAL" property="totalAmount" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="reason" jdbcType="VARCHAR" property="reason" />
+    <result column="pay_way" jdbcType="INTEGER" property="payWay" />
+    <result column="pay_way_show" jdbcType="VARCHAR" property="payWayShow" />
+    <result column="pay_way_time" jdbcType="TIMESTAMP" property="payWayTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="other1" jdbcType="VARCHAR" property="other1" />
+    <result column="other2" jdbcType="VARCHAR" property="other2" />
+  </resultMap>
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdFoodOrder" useGeneratedKeys="true" keyProperty="id">
+    insert into yd_food_order (user_id, seller_id,
+      order_num, estimated_service_time, actual_service_time, 
+      packing_fee, distribution_fee, remark, 
+      tableware_num, coupon_money, activity_money, 
+      integral_money, total_integral, amount_payable, 
+      total_amount, `type`,pay_way)
+    values (#{userId,jdbcType=INTEGER}, #{sellerId,jdbcType=INTEGER},
+      #{orderNum,jdbcType=BIGINT}, #{estimatedServiceTime,jdbcType=TIMESTAMP}, #{actualServiceTime,jdbcType=TIMESTAMP}, 
+      #{packingFee,jdbcType=DECIMAL}, #{distributionFee,jdbcType=DECIMAL}, #{remark,jdbcType=VARCHAR}, 
+      #{tablewareNum,jdbcType=INTEGER}, #{couponMoney,jdbcType=DECIMAL}, #{activityMoney,jdbcType=DECIMAL}, 
+      #{integralMoney,jdbcType=DECIMAL}, #{totalIntegral,jdbcType=INTEGER}, #{amountPayable,jdbcType=DECIMAL}, 
+      #{totalAmount,jdbcType=DECIMAL}, #{type,jdbcType=INTEGER},#{payWay,jdbcType=INTEGER})
+  </insert>
+  <!-- 修改订单为已支付，记录支付信息 -->
+  <update id="updateStatusAndPayWay" parameterType="com.ruoyi.system.domain.YdFoodOrder">
+      update yd_food_order
+      set pay_way = #{payWay},
+        pay_way_show = #{payWayShow},
+        pay_way_time = #{payWayTime},
+        `status` = #{status}
+      where id = #{id}
+  </update>
+  <!-- 修改订单状态 -->
+  <update id="updateStatus" parameterType="com.ruoyi.system.domain.YdFoodOrder">
+    update yd_food_order
+      set `status` = #{status},reason = #{reason}
+      where id = #{id}
+  </update>
+  <!-- 根据id查询订单 -->
+  <select id="selectById" parameterType="com.ruoyi.system.domain.YdFoodOrder" resultMap="BaseResultMap">
+    select id, user_id, seller_id, order_num, estimated_service_time, actual_service_time,
+    packing_fee, distribution_fee, remark, tableware_num, coupon_money, activity_money,
+    integral_money, total_integral, amount_payable, total_amount, `type`, reason, pay_way,
+    pay_way_show, pay_way_time, create_time, update_time, `status`
+    from yd_food_order
+    where id = #{id} and seller_id = #{sellerId} and order_num = #{orderNum} and status > -1
+  </select>
+  <!-- 真·根据id查询订单 -->
+  <select id="selectByTrueId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, user_id, seller_id, order_num, estimated_service_time, actual_service_time,
+    packing_fee, distribution_fee, remark, tableware_num, coupon_money, activity_money,
+    integral_money, total_integral, amount_payable, total_amount, `type`, reason, pay_way,
+    pay_way_show, pay_way_time, create_time, update_time, `status`
+    from yd_food_order
+    where id = #{id} and status > -1
+  </select>
+
+  <!-- 根据订单编号查询订单 -->
+  <select id="selectByOrderNum" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, user_id, seller_id, order_num, estimated_service_time, actual_service_time,
+    packing_fee, distribution_fee, remark, tableware_num, coupon_money, activity_money,
+    integral_money, total_integral, amount_payable, total_amount, `type`, reason, pay_way,
+    pay_way_show, pay_way_time, create_time, update_time, `status`
+    from yd_food_order
+    where order_num = #{orderNum} and status > -1
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, user_id, seller_id, order_num, estimated_service_time, actual_service_time, 
+    packing_fee, distribution_fee, remark, tableware_num, coupon_money, activity_money, 
+    integral_money, total_integral, amount_payable, total_amount, `type`, reason, pay_way, 
+    pay_way_show, pay_way_time, create_time, update_time, `status`, other1, other2
+    from yd_food_order
+  </select>
+</mapper>

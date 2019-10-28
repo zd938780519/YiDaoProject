@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdTeachingUserMapper">
+    <resultMap id="YdTeachingUserResult" type="YdTeachingUser">
+        <id     property="id" column="id" />
+        <result property="tcId"      column="tc_id"       />
+        <result property="userId"       column="user_id"        />
+        <result property="isCollection" column="is_collection"  />
+        <result property="isFabulous"   column="is_Fabulous"    />
+        <result property="isForward"    column="is_forward"    />
+        <result property="createTime"   column="create_time"    />
+        <result property="updateTime"   column="update_time"    />
+        <result property="status"        column="status"         />
+        <result property="other1"        column="other1"         />
+        <result property="other2"        column="other2"         />
+    </resultMap>
+
+    <select id="selectInfoById" parameterType="YdTeachingUser" resultMap="YdTeachingUserResult">
+        select * from yd_Teaching_user_relation where tc_id=#{tcId} and user_id=#{userId} and status>-1
+    </select>
+
+    <insert id="insertInfo" parameterType="YdTeachingUser" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_Teaching_user_relation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tcId != null  and tcId != ''  ">tc_id,</if>
+            <if test="userId != null  and userId != ''  ">user_id,</if>
+            <if test="isFabulous != null  and isFabulous != ''  ">is_Fabulous,</if>
+            <if test="isCollection != null  and isCollection != ''  ">is_collection,</if>
+            <if test="isForward != null  and isForward != ''  ">is_forward,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tcId != null  and tcId != ''  ">#{tcId},</if>
+            <if test="userId != null  and userId != ''  ">#{userId},</if>
+            <if test="isFabulous != null  and isFabulous != ''  ">#{isFabulous},</if>
+            <if test="isCollection != null  and isCollection != ''  ">#{isCollection},</if>
+            <if test="isForward != null  and isForward != ''  ">#{isForward},</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteInfo" parameterType="YdTeachingUser">
+        delete from yd_Teaching_user_relation where tc_id=#{tcId} and user_id=#{userId}
+    </delete>
+
+    <delete id="deleteInfoByTeachingId" parameterType="long">
+        delete from yd_Teaching_user_relation where tc_id=#{tcId}
+    </delete>
+
+    <delete id="deleteInfoByUserId" parameterType="long">
+        delete from yd_Teaching_user_relation where  user_id=#{userId}
+    </delete>
+
+    <update id="updateInfo" parameterType="YdTeachingUser">
+        update yd_Teaching_user_relation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isCollection != null  and isCollection != ''  ">is_Collection = #{isCollection},</if>
+            <if test="isFabulous != null  and isFabulous != ''  ">is_Fabulous = #{isFabulous},</if>
+            <if test="isForward != null  and isForward != ''  ">is_Forward = #{isForward},</if>
+        </trim>
+        where tc_id=#{tcId} and user_id=#{userId}
+    </update>
+
+
+
+
+
+
+
+
+
+</mapper>

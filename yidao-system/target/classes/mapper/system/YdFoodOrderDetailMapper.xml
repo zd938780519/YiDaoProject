@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdFoodOrderDetailMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdFoodOrderDetail">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="fo_id" jdbcType="INTEGER" property="foId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_mobile" jdbcType="VARCHAR" property="userMobile" />
+    <result column="fdi_id" jdbcType="INTEGER" property="fdiId" />
+    <result column="distribution_show" jdbcType="VARCHAR" property="distributionShow" />
+    <result column="seller_id" jdbcType="INTEGER" property="sellerId" />
+    <result column="seller_shopname" jdbcType="VARCHAR" property="sellerShopname" />
+    <result column="seller_mobile" jdbcType="VARCHAR" property="sellerMobile" />
+    <result column="seller_address" jdbcType="VARCHAR" property="sellerAddress" />
+    <result column="deliver_id" jdbcType="INTEGER" property="deliverId" />
+    <result column="deliver_name" jdbcType="VARCHAR" property="deliverName" />
+    <result column="deliver_mobile" jdbcType="VARCHAR" property="deliverMobile" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="other1" jdbcType="VARCHAR" property="other1" />
+    <result column="other2" jdbcType="VARCHAR" property="other2" />
+  </resultMap>
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdFoodOrderDetail">
+    insert into yd_food_order_detail (fo_id, user_id,user_name, user_mobile, fdi_id,distribution_show,consignee,receiving_telephone)
+    values (#{foId}, #{userId},#{userName}, #{userMobile}, #{fdiId},#{distributionShow},#{consignee},#{receivingTelephone})
+  </insert>
+  <!-- 卖家接单，添加卖家信息 -->
+  <update id="updateOfSeller" parameterType="com.ruoyi.system.domain.YdFoodOrderDetail">
+    update yd_food_order_detail set seller_id = #{sellerId},seller_shopname = #{sellerShopname},seller_mobile = #{sellerMobile},seller_address = #{sellerAddress}
+    where fo_id = #{foId}
+  </update>
+  <!-- 骑手配送，添加骑手信息 -->
+  <update id="updateOfDeliver" parameterType="com.ruoyi.system.domain.YdFoodOrderDetail">
+    update yd_food_order_detail set deliver_id = #{deliverId},deliver_name = #{deliverName},deliver_mobile = #{deliverMobile}
+    where fo_id = #{foId}
+  </update>
+
+  <!-- 逻辑删除订单详情信息 -->
+  <update id="delete" parameterType="java.lang.Integer">
+    update yd_food_order_detail set status = -1 where fo_id = #{foId}
+  </update>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, fo_id, user_id, user_name, user_mobile, fdi_id, distribution_show, seller_id, 
+    seller_shopname, seller_mobile, seller_address, deliver_id, deliver_name, deliver_mobile, 
+    create_time, update_time, `status`, other1, other2
+    from yd_food_order_detail
+  </select>
+</mapper>

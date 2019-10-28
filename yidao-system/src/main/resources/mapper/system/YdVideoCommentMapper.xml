@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdVideoCommentMapper">
+
+    <resultMap id="YdVideoCommentResult" type="YdVideoComment">
+        <id     property="id" column="id" />
+        <result property="commentType"    column="comment_type"    />
+        <result property="commentObject"  column="comment_object"  />
+        <result property="heatNum"        column="heat_num"        />
+        <result property="userId"         column="user_id"         />
+        <result property="name"            column="name"            />
+        <result property="photoPath"      column="photo_path"      />
+        <result property="content"         column="content"         />
+        <result property="time"            column="time"            />
+        <result property="replyNum"       column="reply_num"       />
+        <result property="createTime"     column="create_time"     />
+        <result property="updateTime"     column="update_time"     />
+        <result property="status"          column="status"          />
+        <result property="other1"          column="other1"          />
+        <result property="other2"          column="other2"          />
+    </resultMap>
+    <resultMap id="YdVideoCommentUserResult" type="YdVideoCommentUser">
+        <id     property="id" column="id" />
+        <result property="commentId"    column="vc_id"    />
+        <result property="userId"  column="user_id"  />
+        <result property="createTime"     column="create_time"     />
+        <result property="updateTime"     column="update_time"     />
+        <result property="status"          column="status"          />
+        <result property="other1"          column="other1"          />
+        <result property="other2"          column="other2"          />
+    </resultMap>
+
+
+    <select id="selectCommentNumById" parameterType="long" resultType="Integer">
+        select comment_num from yd_video_info where id=#{videoId} and status > - 1
+    </select>
+
+    <select id="selectCommentInfoById" parameterType="YdVideoComment" resultMap="YdVideoCommentResult">
+        select vc.`id`,vc.`name`,vc.photo_path,vc.content,vc.time,vc.reply_num,vcu.is_fabulous
+        from yd_video_comment vc
+        left join yd_video_comment_user_relation vcu on vc.id=vcu.vc_id and vcu.user_id = #{userId}
+        left join yd_user u on u.id=vcu.user_id
+        where vc.comment_object = #{commentObject} and comment_type = #{commentType} and vc.status > - 1
+    </select>
+
+    <select id="selectCommentById"  parameterType="long" resultMap="YdVideoCommentResult">
+        select * from yd_video_comment where id = #{id} and status > - 1
+    </select>
+
+    <select id="selectCommentInfoByIdToDelete"  resultMap="YdVideoCommentResult">
+        select id from yd_video_comment where comment_object=#{id} and comment_type=#{type} and status > - 1
+    </select>
+
+    <insert id="insertComment" parameterType="YdVideoComment" useGeneratedKeys="true" keyProperty="id">
+        INSERT into yd_video_comment (comment_type,comment_object,user_id,`name`,photo_path,content)
+         values (#{commentType},#{commentObject},#{userId},#{name},#{photoPath},#{content})
+    </insert>
+
+    <delete id="deleteCommentByIds" >
+        delete from yd_video_comment where id in ${ids}
+    </delete>
+
+    <update id="updateCommentReplyNum" parameterType="YdVideoComment">
+        update yd_video_comment set reply_num=reply_num+#{replyNum} where id=#{id}
+    </update>
+
+    <delete id="deleteCommentUserRelation">
+         delete from yd_video_comment_user_relation where vc_id in ${ids}
+    </delete>
+
+    <delete id="deleteAtUserInfo">
+        delete from  yd_video_comment_at_user where vc_id in ${ids}
+    </delete>
+
+    <insert id="fabulousComment" parameterType="YdVideoCommentUser" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_video_comment_user_relation (user_id,vc_id,is_fabulous) values (#{userId},#{commentId},1)
+    </insert>
+
+    <delete id="deleteFabulous" parameterType="YdVideoCommentUser">
+        delete from yd_video_comment_user_relation where user_id = #{userId} and vc_id = #{commentId}
+    </delete>
+
+    <update id="updateCommentHeatNum" parameterType="YdVideoComment">
+        update yd_video_comment set heat_num = heat_num + #{heatNum} where id = #{id}
+    </update>
+
+
+
+</mapper>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('订单列表')" />
+	<style type="text/css">
+		.heading{
+			padding-bottom: 0px;
+		}
+	</style>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="panel-heading heading">
+			<div class="panel-options">
+				<ul class="nav nav-tabs">
+					<li class="active"><a data-toggle="tab" onclick="initTable(0)">全部订单</a>
+					</li>
+					<li class=""><a data-toggle="tab" onclick="initTable(1)">待付款</a>
+					</li>
+					<li class=""><a data-toggle="tab" onclick="initTable(2)">待发货</a>
+					</li>
+					<li class=""><a data-toggle="tab" onclick="initTable(3)">待收货</a>
+					</li>
+					<li class=""><a data-toggle="tab" onclick="initTable(4)">待退款</a>
+					</li>
+					<li class=""><a data-toggle="tab" onclick="initTable(6)">已完成</a>
+					</li>
+					<li class=""><a data-toggle="tab" onclick="initTable(7)">已关闭</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div id="tableDiv" th:fragment="tableDiv"></div>
+	</div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+	var shopId=1;//系统店铺id为1
+	$(function () {
+		initTable(0);
+	});
+
+	function initTable(type) {
+		$.ajax({
+			url: 'orderAll',
+			type: 'get',
+			data: {
+				shopId : shopId,
+				type : type
+			},
+			success: function (data) {
+				$('#tableDiv').html(data);
+			}
+		});
+	}
+
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdUserMapper">
+    <resultMap id="YdUserResult" type="YdUser">
+        <id     property="id" column="id" />
+        <result property="userName" column="name" />
+        <result property="photoPath" column="photo_path" />
+        <result property="phoneNum" column="phone_num" />
+        <result property="isVip" column="is_vip" />
+        <result property="briefIntroduction"   column="brief_introduction"   />
+        <result property="sex"                  column="sex"                  />
+        <result property="sexShow"             column="sex_show"             />
+        <result property="birthday"             column="birthday"             />
+        <result property="follow"               column="follow"               />
+        <result property="apprentice"           column="apprentice"           />
+        <result property="coverPhotoPath"     column="cover_photo_path"     />
+        <result property="fansNum"             column="fans_num"             />
+        <result property="foodInterestNum"    column="food_interest_num"    />
+        <result property="slogan"               column="slogan"               />
+        <result property="worksNum"            column="works_num"            />
+        <result property="teachingNum"         column="teaching_num"         />
+        <result property="ruralFlavorNum"     column="rural_flavor_num"     />
+        <result property="currentAddress"      column="current_address"      />
+        <result property="hometown"             column="hometown"             />
+        <result property="isPeripheryRestaurant" column="is_periphery_restaurant"  />
+
+        <result property="isFollow"      column="is_follow"      />
+        <result property="isApprentice"             column="is_apprentice"             />
+        <result property="isPullBlack"             column="is_pull_black"             />
+
+
+    </resultMap>
+
+    <sql id="selectAll">
+        select * from yd_user where status > -1
+    </sql>
+
+    <select id="selectAllUser" resultMap="YdUserResult">
+        <include refid="selectAll"/>
+    </select>
+
+    <insert id="insertUser" parameterType="YdUser" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null  and userName != ''  ">name,</if>
+            <if test="phoneNum != null  and phoneNum != ''  ">phone_num,</if>
+            <if test="briefIntroduction != null  and briefIntroduction  != ''  ">brief_introduction,</if>
+            <if test="sex               != null  and sex                != ''  ">sex               ,</if>
+            <if test="sexShow           != null  and sexShow            != ''  ">sex_show          ,</if>
+            <if test="birthday          != null  and birthday           != ''  ">birthday          ,</if>
+            <if test="follow            != null  and follow             != ''  ">follow            ,</if>
+            <if test="apprentice        != null  and apprentice         != ''  ">apprentice        ,</if>
+            <if test="coverPhotoPath    != null  and coverPhotoPath     != ''  ">cover_photo_path  ,</if>
+            <if test="fansNum           != null  and fansNum            != ''  ">fans_num          ,</if>
+            <if test="foodInterestNum   != null  and foodInterestNum    != ''  ">food_interest_num ,</if>
+            <if test="slogan            != null  and slogan             != ''  ">slogan            ,</if>
+            <if test="worksNum          != null  and worksNum           != ''  ">works_num         ,</if>
+            <if test="teachingNum       != null  and teachingNum        != ''  ">teaching_num      ,</if>
+            <if test="ruralFlavorNum    != null  and ruralFlavorNum     != ''  ">rural_flavor_num  ,</if>
+            <if test="currentAddress    != null  and currentAddress     != ''  ">current_address   ,</if>
+            <if test="hometown          != null  and hometown           != ''  ">hometown          ,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null  and userName != ''  ">#{userName},</if>
+            <if test="phoneNum != null  and phoneNum != ''  ">#{phoneNum},</if>
+            <if test="briefIntroduction != null  and briefIntroduction  != ''  ">#{briefIntroduction},</if>
+            <if test="sex               != null  and sex                != ''  ">#{sex}              ,</if>
+            <if test="sexShow           != null  and sexShow            != ''  ">#{sexShow}          ,</if>
+            <if test="birthday          != null  and birthday           != ''  ">#{birthday}         ,</if>
+            <if test="follow            != null  and follow             != ''  ">#{follow}           ,</if>
+            <if test="apprentice        != null  and apprentice         != ''  ">#{apprentice}       ,</if>
+            <if test="coverPhotoPath    != null  and coverPhotoPath     != ''  ">#{coverPhotoPath}   ,</if>
+            <if test="fansNum           != null  and fansNum            != ''  ">#{fansNum}          ,</if>
+            <if test="foodInterestNum   != null  and foodInterestNum    != ''  ">#{foodInterestNum}  ,</if>
+            <if test="slogan            != null  and slogan             != ''  ">#{slogan}           ,</if>
+            <if test="worksNum          != null  and worksNum           != ''  ">#{worksNum}         ,</if>
+            <if test="teachingNum       != null  and teachingNum        != ''  ">#{teachingNum}      ,</if>
+            <if test="ruralFlavorNum    != null  and ruralFlavorNum     != ''  ">#{ruralFlavorNum}   ,</if>
+            <if test="currentAddress    != null  and currentAddress     != ''  ">#{currentAddress}   ,</if>
+            <if test="hometown          != null  and hometown           != ''  ">#{hometown}         ,</if>
+        </trim>
+    </insert>
+
+    <update id="updateUser" >
+        update yd_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="user.userName != null  and user.userName != ''  ">name = #{user.userName},</if>
+            <if test="user.photoPath != null  and user.photoPath != ''  ">photo_path = #{user.photoPath},</if>
+            <if test="user.phoneNum != null  and user.phoneNum != ''  ">phone_Num = #{user.phoneNum},</if>
+            <if test="user.briefIntroduction != null  and user.briefIntroduction  != ''  ">brief_introduction=#{user.briefIntroduction},</if>
+            <if test="user.sex               != null  and user.sex                != ''  ">sex               =#{user.sex}              ,</if>
+            <if test="user.sexShow           != null  and user.sexShow            != ''  ">sex_show          =#{user.sexShow}          ,</if>
+            <if test="user.birthday          != null  and user.birthday           != ''  ">birthday          =#{user.birthday}         ,</if>
+            <if test="user.follow            != null  and user.follow             != ''  ">follow            =#{user.follow}           ,</if>
+            <if test="user.apprentice        != null  and user.apprentice         != ''  ">apprentice        =#{user.apprentice}       ,</if>
+            <if test="user.coverPhotoPath    != null  and user.coverPhotoPath     != ''  ">cover_photo_path  =#{user.coverPhotoPath}   ,</if>
+            <if test="user.fansNum           != null  and user.fansNum            != ''  ">fans_num          =#{user.fansNum}          ,</if>
+            <if test="user.foodInterestNum   != null  and user.foodInterestNum    != ''  ">food_interest_num =#{user.foodInterestNum}  ,</if>
+            <if test="user.slogan            != null  and user.slogan             != ''  ">slogan            =#{user.slogan}           ,</if>
+            <if test="user.worksNum          != null  and user.worksNum           != ''  ">works_num         =#{user.worksNum}         ,</if>
+            <if test="user.teachingNum       != null  and user.teachingNum        != ''  ">teaching_num      =#{user.teachingNum}      ,</if>
+            <if test="user.ruralFlavorNum    != null  and user.ruralFlavorNum     != ''  ">rural_flavor_num  =#{user.ruralFlavorNum}   ,</if>
+            <if test="user.currentAddress    != null  and user.currentAddress     != ''  ">current_address   =#{user.currentAddress}   ,</if>
+            <if test="user.hometown          != null  and user.hometown           != ''  ">hometown          =#{user.hometown}         ,</if>
+        </trim>
+        where id = #{user.id}
+    </update>
+
+    <update id="deleteUser" parameterType="YdUser">
+        update yd_user set status = -1
+        where id = #{id}
+    </update>
+
+    <select id="selectPhoneNum" parameterType="YdUser" resultType="Integer">
+         select count(1) num from yd_user where phone_num = #{phoneNum}
+    </select>
+
+    <select id="selectById" parameterType="YdUserToUser" resultMap="YdUserResult">
+         select `name`,brief_introduction ,sex,sex_show,birthday,follow,apprentice,cover_photo_path ,fans_num,
+         food_interest_num,slogan,works_num,teaching_num,rural_flavor_num,current_address,hometown,utu.is_follow,utu.is_apprentice,utu.is_pull_black
+         from yd_user u
+         left join yd_user_to_user_relation utu on u.id=utu.to_id  and utu.from_id=#{fromId}
+         where u.status > -1 and u.id=#{toId}
+    </select>
+
+    <select id="isProhibition" parameterType="Long"  resultType="Integer">
+        select count(1) num from yd_user where id=#{id} and status = -1
+    </select>
+
+    <update id="prohibition" parameterType="Long">
+        update yd_user set status=-1 where id=#{id}
+    </update>
+
+    <update id="relieveProhibition" parameterType="Long">
+        update yd_user set status=0 where id=#{id}
+    </update>
+
+    <select id="selectUserById"  parameterType="Long" resultMap="YdUserResult">
+        select * from yd_user where id=#{id}
+    </select>
+    <!-- 根据id查询用户信息（订单） -->
+    <select id="selectByIdOfOrder" parameterType="java.lang.Long" resultMap="YdUserResult">
+        select id,`name`,phone_num from yd_user where id = #{id} and status > -1
+    </select>
+
+</mapper>

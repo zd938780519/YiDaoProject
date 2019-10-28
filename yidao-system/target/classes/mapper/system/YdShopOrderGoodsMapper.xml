@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdShopOrderGoodsMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdShopOrderGoods">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="goods_id" jdbcType="BIGINT" property="goodsId" />
+    <result column="sgp_id" jdbcType="BIGINT" property="sgpId" />
+    <result column="so_id" jdbcType="BIGINT" property="soId" />
+    <result column="shop_id" jdbcType="BIGINT" property="shopId" />
+    <result column="goods_unit_price" jdbcType="DECIMAL" property="goodsUnitPrice" />
+    <result column="goods_count" jdbcType="INTEGER" property="goodsCount" />
+    <result column="give_integral_price" jdbcType="INTEGER" property="giveIntegralPrice" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="other1" jdbcType="VARCHAR" property="other1" />
+    <result column="other2" jdbcType="VARCHAR" property="other2" />
+  </resultMap>
+
+  <resultMap id="YdShopOrderGoodsIsSimpleResult" type="com.ruoyi.system.domain.YdShopOrderGoodsIsSimple">
+    <id column="goods_Id" jdbcType="BIGINT" property="goodsId" />
+    <result column="shop_Id" jdbcType="BIGINT" property="shopId" />
+    <result column="shop_Name" jdbcType="BIGINT" property="shopName" />
+    <result column="shop_Photo_Path" jdbcType="BIGINT" property="shopPhotoPath" />
+    <result column="goods_Name" jdbcType="BIGINT" property="goodsName" />
+    <result column="goods_Parameter_Type" jdbcType="BIGINT" property="goodsParameterType" />
+    <result column="goods_Parameter" jdbcType="BIGINT" property="goodsParameter" />
+    <result column="goods_Photo_Path" jdbcType="BIGINT" property="goodsPhotoPath" />
+    <result column="goods_Count" jdbcType="BIGINT" property="goodsCount" />
+    <result column="goods_Money" jdbcType="BIGINT" property="goodsMoney" />
+    <result column="goods_Integral" jdbcType="BIGINT" property="goodsIntegral" />
+    <result column="is_Allow_Coupon" jdbcType="BIGINT" property="isAllowCoupon" />
+    <result column="is_Fixed_Money_And_Integral" jdbcType="BIGINT" property="isFixedMoneyAndIntegral" />
+    <result column="is_Pure_Integral" jdbcType="BIGINT" property="isPureIntegral" />
+  </resultMap>
+
+
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdShopOrderGoods">
+    insert into yd_shop_order_goods (id, goods_id,sgp_id, so_id,
+      shop_id, goods_unit_price, goods_count, 
+      give_integral_price, create_time, update_time, 
+      `status`, other1, other2
+      )
+    values (#{id,jdbcType=BIGINT}, #{goodsId,jdbcType=BIGINT}, #{sgpId,jdbcType=BIGINT}, #{soId,jdbcType=BIGINT},
+      #{shopId,jdbcType=BIGINT}, #{goodsUnitPrice,jdbcType=DECIMAL}, #{goodsCount,jdbcType=INTEGER}, 
+      #{giveIntegralPrice,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER}, #{other1,jdbcType=VARCHAR}, #{other2,jdbcType=VARCHAR}
+      )
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, goods_id, sgp_id,so_id, shop_id, goods_unit_price, goods_count, give_integral_price,
+    create_time, update_time, `status`, other1, other2
+    from yd_shop_order_goods
+  </select>
+
+  <delete id="removeGoodsByOrderId" parameterType="long">
+    delete from yd_shop_order_goods where so_id=#{orderId}
+  </delete>
+
+  <select id="getOrderGoodsSimpleInfo"  parameterType="long" resultMap="YdShopOrderGoodsIsSimpleResult">
+    select sg.id goods_Id,sg.shop_id shop_Id,s.`name` shop_Name,s.photo_path shop_Photo_Path,sg.`name` goods_Name,sg.parameter_type goods_Parameter_Type,
+    sgp.parameter goods_Parameter,sgp.photo_path goods_Photo_Path,sog.goods_count goods_Count,sog.goods_unit_price goods_Money,sog.integral_price goods_Integral,
+    sog.is_allow_coupon is_Allow_Coupon,sog.is_fixed_money_and_integral is_Fixed_Money_And_Integral,sog.is_pure_integral is_Pure_Integral
+    from yd_shop s
+    inner join yd_shop_goods sg on sg.shop_id=s.id
+    inner join yd_shop_goods_parameter sgp on sgp.sg_id=sg.id
+    inner join yd_shop_order_goods sog on sog.sgp_id=sgp.id
+    where sog.so_id=#{orderId}
+  </select>
+
+</mapper>

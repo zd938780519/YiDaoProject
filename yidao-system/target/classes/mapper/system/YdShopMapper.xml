@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdShopMapper">
+  <resultMap id="YdShopResult" type="YdShop">
+    <id     property="id" column="id" />
+    <result property="name" column="name"/>
+    <result property="advertisingSlogans" column="advertising_slogans"/>
+    <result property="browsingVolume" column="browsing_volume"/>
+    <result property="thumbsNum" column="thumbs_num"/>
+    <result property="comment" column="comment"/>
+    <result property="follow" column="follow"/>
+    <result property="rateOfAcclaim" column="rate_of_acclaim"/>
+    <result property="shippingAddress" column="shipping_address"/>
+    <result property="dynamic" column="dynamic"/>
+    <result property="turnover" column="turnover"/>
+    <result property="postalQuota" column="postal_quota"/>
+    <result property="integral" column="integral"/>
+    <result property="balance" column="balance"/>
+    <result property="createTime" column="create_time"/>
+    <result property="updateTime" column="update_time"/>
+    <result property="status" column="status"/>
+    <result property="other1" column="other1"/>
+    <result property="other2" column="other2"/>
+
+  </resultMap>
+<!-- 开放第三方店铺的时候再改新增和查询 -->
+  <insert id="insert" parameterType="YdShop"  useGeneratedKeys="true" keyProperty="id">
+    insert into yd_shop (`name`, advertising_slogans,
+      browsing_volume, thumbs_num, `comment`, 
+      follow, rate_of_acclaim, shipping_address, 
+      `dynamic`, turnover, create_time, 
+      update_time, `status`, other1, 
+      other2)
+    values (#{name,jdbcType=VARCHAR}, #{advertisingSlogans,jdbcType=VARCHAR},
+      #{browsingVolume,jdbcType=INTEGER}, #{thumbsNum,jdbcType=INTEGER}, #{comment,jdbcType=INTEGER}, 
+      #{follow,jdbcType=INTEGER}, #{rateOfAcclaim,jdbcType=INTEGER}, #{shippingAddress,jdbcType=VARCHAR}, 
+      #{dynamic,jdbcType=VARCHAR}, #{turnover,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{other1,jdbcType=VARCHAR}, 
+      #{other2,jdbcType=VARCHAR})
+  </insert>
+  <select id="selectAll" resultMap="YdShopResult">
+    select *
+    from yd_shop where `status`>-1
+  </select>
+
+  <update id="updateBalanceAndIntegral">
+    update yd_shop set integral = integral + #{integral},balance = balance + #{balance} where id = #{shopId}
+  </update>
+
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdFoodInfoMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdFoodInfo">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="seller_id" jdbcType="INTEGER" property="sellerId" />
+    <result column="fo_id" jdbcType="INTEGER" property="foId" />
+    <result column="dish_id" jdbcType="INTEGER" property="dishId" />
+    <result column="dish_name" jdbcType="VARCHAR" property="dishName" />
+    <result column="thumbnail_path" jdbcType="VARCHAR" property="thumbnailPath" />
+    <result column="food_num" jdbcType="INTEGER" property="foodNum" />
+    <result column="original_price" jdbcType="DECIMAL" property="originalPrice" />
+    <result column="actual_price" jdbcType="DECIMAL" property="actualPrice" />
+    <result column="discount" jdbcType="DECIMAL" property="discount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="other1" jdbcType="VARCHAR" property="other1" />
+    <result column="other2" jdbcType="VARCHAR" property="other2" />
+  </resultMap>
+  <insert id="insert" parameterType="java.util.List">
+    insert into yd_food_info (seller_id, fo_id,
+      dish_id,dish_name, thumbnail_path, food_num,
+      original_price, actual_price, discount)
+    values
+    <foreach collection="list" item="emp" separator=",">
+      (#{emp.sellerId},#{emp.foId},#{emp.dishId},#{emp.dishName},#{emp.thumbnailPath},#{emp.foodNum},
+      #{emp.originalPrice},#{emp.actualPrice},#{emp.discount})
+    </foreach>
+  </insert>
+<!-- 根据订单id和卖家id查询菜品信息 -->
+  <select id="selectByShopIdAndOrderId" parameterType="com.ruoyi.system.domain.YdFoodInfo" resultMap="BaseResultMap">
+    select id, seller_id, fo_id,dish_id, dish_name, thumbnail_path, food_num, original_price,
+        actual_price, discount, `status`
+    from yd_food_info where seller_id = #{sellerId} and fo_id = #{foId}
+  </select>
+
+  <!-- 逻辑删除菜品表 -->
+  <update id="delete" parameterType="java.lang.Integer">
+    update yd_food_info set status = -1 where fo_id = #{foId}
+  </update>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, seller_id, fo_id, dish_name, thumbnail_path, food_num, original_price, 
+    actual_price, discount, create_time, update_time, `status`, other1, other2
+    from yd_food_info
+  </select>
+</mapper>

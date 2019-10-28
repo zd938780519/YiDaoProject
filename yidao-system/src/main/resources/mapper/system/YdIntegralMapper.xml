@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdIntegralMapper">
+    <resultMap id="YdUserResult" type="YdUser">
+        <id     property="id" column="id" />
+        <result property="integral"             column="integral"          />
+        <result property="giftIntegral"             column="gift_integral"          />
+    </resultMap>
+
+    <select id="selectIntegralByUserId" resultMap="YdUserResult">
+        select integral,gift_integral from yd_user where id=#{userId}
+    </select>
+
+    <update id="updateIntegral" parameterType="YdUser">
+        update yd_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="integral != null  and integral != '' or  integral == 0">integral = #{integral},</if>
+            <if test="giftIntegral != null  and giftIntegral != '' or giftIntegral == 0">gift_integral = #{giftIntegral},</if>
+        </trim>
+        where id=#{id}
+    </update>
+
+    <update id="bonusIntegral"  parameterType="YdUser">
+        update yd_user set gift_integral=gift_integral+#{integral} where id = #{userId}
+    </update>
+
+
+
+
+
+
+</mapper>

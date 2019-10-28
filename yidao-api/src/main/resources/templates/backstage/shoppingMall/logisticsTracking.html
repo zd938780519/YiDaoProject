@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <th:block th:include="include :: header('订单详情')" />
+    <style type="text/css">
+        ul li{list-style:none;}
+        .track-list{margin:20px; padding-left:5px; position:relative;}
+        .track-list li{position:relative; padding:9px 0 0 25px; line-height:18px; border-left:1px solid #d9d9d9; color: #999;}
+        .track-list li.first{color:red; padding-top:0; border-left-color:#fff;}
+        .track-list li .node-icon{position:absolute; left:-6px; top: 50%; width: 11px; height: 11px; background: url(../../../../img/order-icons.png) -21px -72px no-repeat;}
+        .track-list li.first .node-icon{background-position:0-72px;}
+        .track-list li .time{margin-right:20px; position:relative; top:4px; display:inline-block; vertical-align:middle;}
+        .track-list li .txt{max-width:600px; position:relative; top:4px; display:inline-block; vertical-align:middle;}
+        .track-list li.first .time{margin-right:20px; }
+        .track-list li.first .txt{max-width:600px; }
+    </style>
+</head>
+<body>
+<div class="form-content">
+    <div class="track-rcol">
+        <div class="track-list">
+            <ul>
+            </ul>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var orderId = getQueryString("orderId");
+    var prefix = ctx + "yd/backstage/shopping/orders";
+    $(function() {
+        initInfo();
+    });
+
+    function initInfo(){
+        $.ajax({
+            type: "POST",
+            url:  prefix + "/getLogisticsTrackingInfo",
+            data: "orderId="+orderId,
+            dataType: "json",
+            success: function(data){
+                var status = data.status;
+                if(status == 1 || status == "1"){
+                    var result = data.result;
+                    var obj = result;
+                    if(obj.State != 0 && obj.State != "0"){
+                        var deliver1 ="<li class='first'><i class='node-icon'></i><span class='time'>" +obj.Traces[obj.Traces.length-1].AcceptTime
+                            + "</span><span class='txt'>" +obj.Traces[obj.Traces.length-1].AcceptStation +"</span></li>";
+                        $('.track-list ul').html(deliver1);//清空ul并添加最新一条物流信息
+                        for(var i = obj.Traces.length-2;i>=0;i--){
+                            var deliver ="<li ><i class='node-icon'></i><span class='time'>" +obj.Traces[i].AcceptTime
+                                + "</span><span class='txt'>" +obj.Traces[i].AcceptStation +"</span></li>";
+                            $('.track-list ul').append(deliver);//添加之前的物流轨迹
+                        }
+                    }else{
+                        $('.track-list ul').html("<li style='border-left: 0px;'>暂无轨迹信息</li>");
+                    }
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

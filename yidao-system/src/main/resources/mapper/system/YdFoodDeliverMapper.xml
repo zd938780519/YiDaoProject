@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdFoodDeliverMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdFoodDeliver">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="deliver_mobile" jdbcType="VARCHAR" property="deliverMobile" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="avg_score" jdbcType="DECIMAL" property="avgScore" />
+    <result column="order_quantity_month" jdbcType="INTEGER" property="orderQuantityMonth" />
+    <result column="order_quantity_total" jdbcType="INTEGER" property="orderQuantityTotal" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="other1" jdbcType="VARCHAR" property="other1" />
+    <result column="other2" jdbcType="VARCHAR" property="other2" />
+  </resultMap>
+  <!-- 按id查询配送员信息 -->
+  <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, `name`, deliver_mobile,avg_score, order_quantity_month, order_quantity_total
+    from yd_food_deliver where id = #{id} and status > -1
+  </select>
+
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdFoodDeliver">
+    insert into yd_food_deliver (id, `name`, deliver_mobile, 
+      `password`, avg_score, order_quantity_month, 
+      order_quantity_total, create_time, update_time, 
+      `status`, other1, other2
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{deliverMobile,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{avgScore,jdbcType=DECIMAL}, #{orderQuantityMonth,jdbcType=INTEGER}, 
+      #{orderQuantityTotal,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER}, #{other1,jdbcType=VARCHAR}, #{other2,jdbcType=VARCHAR}
+      )
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, `name`, deliver_mobile, `password`, avg_score, order_quantity_month, order_quantity_total, 
+    create_time, update_time, `status`, other1, other2
+    from yd_food_deliver
+  </select>
+</mapper>

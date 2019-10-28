@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdTeachingContentMapper">
+    <resultMap id="YdTeachingContentResult" type="YdTeachingContent">
+        <id     property="id" column="id" />
+        <result property="userId"                    column="user_id"                 />
+        <result property="dishName"                  column="dish_name"               />
+        <result property="browseNum"                 column="browse_num"              />
+        <result property="isSelected"             column="is_Selected"          />
+        <result property="collectionNum"             column="collection_num"          />
+        <result property="heatNum"                   column="heat_num "               />
+        <result property="commentNum"                column="comment_num"             />
+        <result property="forwardNum"                column="forward_num"             />
+        <result property="resultVideoPath"          column="result_video_path"       />
+        <result property="thumbnailPath"             column="thumbnail_path"          />
+        <result property="resultPicturePath"        column="result_picture_path"     />
+        <result property="experience"                 column="experience"              />
+        <result property="skill"                      column="skill"                   />
+        <result property="cookingTime"               column="cooking_time"            />
+        <result property="cookingTimeShow"          column="cooking_time_show"       />
+        <result property="flavor"                     column="flavor"                  />
+        <result property="flavorShow"                column="flavor_show"             />
+        <result property="difficulty"                 column="difficulty"              />
+        <result property="difficultyShow"            column="difficulty_show"         />
+        <result property="stateType"                 column="state_type"              />
+        <result property="createTime"                column="create_time"             />
+        <result property="updateTime"                column="update_time"             />
+        <result property="status"                     column="status"                  />
+        <result property="other1"                     column="other1"                  />
+        <result property="other2"                     column="other2"                  />
+
+        <result property="isFabulous"                     column="is_fabulous"                  />
+        <collection property="mainMaterial" ofType="com.ruoyi.system.domain.YdTeachingMaterials" column="tc_Id">
+            <id     property="id" column="tm1_id" />
+            <result property="material"                    column="tm1_material"                 />
+            <result property="number"                    column="tm1_number"                 />
+        </collection>
+        <collection property="accessories" ofType="com.ruoyi.system.domain.YdTeachingMaterials" column="tc_Id">
+            <id     property="id" column="tm2_id" />
+            <result property="material"                    column="tm2_material"                 />
+            <result property="number"                    column="tm2_number"                 />
+        </collection>
+        <collection property="steps" ofType="com.ruoyi.system.domain.YdTeachingStep" column="tc_Id">
+            <id     property="id" column="ts_id" />
+            <result property="step"                    column="step"                 />
+            <result property="picturePath"                    column="picture_Path"                 />
+            <result property="explanatoryText"                    column="explanatory_Text"                 />
+        </collection>
+    </resultMap>
+
+    <resultMap id="ydTeachingMaterialsResult" type="YdTeachingMaterials">
+        <id     property="id" column="id" />
+        <result property="tcId"                    column="tc_Id"                 />
+        <result property="type"                    column="type"                 />
+        <result property="material"                    column="material"                 />
+        <result property="number"                    column="number"                 />
+        <result property="createTime"                column="create_time"             />
+        <result property="updateTime"                column="update_time"             />
+        <result property="status"                     column="status"                  />
+        <result property="other1"                     column="other1"                  />
+        <result property="other2"                     column="other2"                  />
+    </resultMap>
+
+    <resultMap id="ydTeachingStepResult" type="YdTeachingStep">
+        <id     property="id" column="id" />
+        <result property="tcId"                    column="tc_Id"                 />
+        <result property="step"                    column="step"                 />
+        <result property="picturePath"                    column="picture_Path"                 />
+        <result property="explanatoryText"                    column="explanatory_Text"                 />
+    </resultMap>
+
+    <select id="selectTeachingSimpleInfoByUserId" resultMap="YdTeachingContentResult">
+        select dish_name,is_selected,browse_num,collection_num,thumbnail_path,update_time
+        from yd_teaching_content where user_id=#{userId} and status >-1 and state_type = 2
+        order by heat_num desc,browse_num desc,collection_num desc
+        limit #{currIndex} , #{pageSize}
+    </select>
+
+    <select id="selectAllTeachingSimpleInfoByUserId" resultMap="YdTeachingContentResult">
+        select tc.dish_name,tc.is_selected,tc.browse_num,tc.collection_num,tc.thumbnail_path,tc.update_time
+        from yd_teaching_content tc where tc.status >-1 and tc.state_type = 2
+        and not EXISTS (SELECT 1 FROM yd_shield_info si WHERE si.from_id=#{userId} and tc.user_id=si.to_id)
+        order by heat_num desc,browse_num desc,collection_num desc
+        limit #{currIndex} , #{pageSize}
+    </select>
+
+    <select id="selectDraftTeachingSimpleInfoByUserId">
+         select dish_name,is_selected,browse_num,collection_num,thumbnail_path,update_time
+        from yd_teaching_content where user_id=#{userId} and status >-1 and state_type = 1
+        limit #{currIndex} , #{pageSize}
+    </select>
+
+    <select id="selectTeachingDetailedInfoByUserId" resultMap="YdTeachingContentResult">
+        select tc.*,tm1.id tm1_id ,tm1.material tm1_material,tm1.number tm1_number,
+        tm2.id tm2_id ,tm2.material tm2_material,tm2.number tm2_number,
+        ts.id ts_id,ts.picture_path, ts.explanatory_text,ts.step,
+        tur.is_fabulous from yd_teaching_content tc
+        left join yd_teaching_user_relation tur on tc.id=tur.tc_id and tur.`status`>-1 and tur.user_id=#{userId}
+        left join yd_teaching_materials tm1 on tm1.tc_id=tc.id and tm1.type=1 and tm1.`status`>-1
+        left join yd_teaching_materials tm2 on tm2.tc_id=tc.id and tm2.type=2 and tm2.`status`>-1
+        left join yd_teaching_step ts on ts.tc_id=tc.id  and ts.`status`>-1
+        where tc.id=#{id} and tc.status >-1 order by ts.step
+    </select>
+
+    <insert id="insertTeachingContent" parameterType="YdTeachingContent" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_teaching_content
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId             != null  and  userId            != ''  ">user_id                ,</if>
+            <if test="dishName           != null  and  dishName          != ''  ">dish_name              ,</if>
+            <if test="isSelected           != null  and  isSelected          != ''  ">is_Selected              ,</if>
+            <if test="browseNum          != null  and  browseNum         != ''  ">browse_num             ,</if>
+            <if test="collectionNum      != null  and  collectionNum     != ''  ">collection_num         ,</if>
+            <if test="heatNum            != null  and  heatNum           != ''  ">heat_num               ,</if>
+            <if test="commentNum         != null  and  commentNum        != ''  ">comment_num            ,</if>
+            <if test="forwardNum         != null  and  forwardNum        != ''  ">forward_Num            ,</if>
+            <if test="resultVideoPath    != null  and  resultVideoPath   != ''  ">result_video_path      ,</if>
+            <if test="thumbnailPath      != null  and  thumbnailPath     != ''  ">thumbnail_path         ,</if>
+            <if test="resultPicturePath  != null  and  resultPicturePath != ''  ">result_picture_path    ,</if>
+            <if test="experience         != null  and  experience        != ''  ">experience             ,</if>
+            <if test="skill              != null  and  skill             != ''  ">skill                  ,</if>
+            <if test="cookingTime        != null  and  cookingTime       != ''  ">cooking_time           ,</if>
+            <if test="cookingTimeShow    != null  and  cookingTimeShow   != ''  ">cooking_time_show      ,</if>
+            <if test="flavor             != null  and  flavor            != ''  ">flavor                 ,</if>
+            <if test="flavorShow         != null  and  flavorShow        != ''  ">flavor_show            ,</if>
+            <if test="difficulty         != null  and  difficulty        != ''  ">difficulty             ,</if>
+            <if test="difficultyShow     != null  and  difficultyShow    != ''  ">difficulty_show        ,</if>
+            <if test="stateType          != null  and  stateType         != ''  ">state_type             ,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId            != null  and userId            != ''  ">#{userId},</if>
+            <if test="dishName          != null  and dishName          != ''  ">#{dishName},</if>
+            <if test="isSelected          != null  and isSelected          != ''  ">#{isSelected},</if>
+            <if test="browseNum         != null  and browseNum         != ''  ">#{browseNum},</if>
+            <if test="collectionNum     != null  and collectionNum     != ''  ">#{collectionNum},</if>
+            <if test="heatNum           != null  and heatNum           != ''  ">#{heatNum},</if>
+            <if test="commentNum        != null  and commentNum        != ''  ">#{commentNum},</if>
+            <if test="forwardNum        != null  and forwardNum        != ''  ">#{forwardNum},</if>
+            <if test="resultVideoPath   != null  and resultVideoPath   != ''  ">#{resultVideoPath},</if>
+            <if test="thumbnailPath     != null  and thumbnailPath     != ''  ">#{thumbnailPath},</if>
+            <if test="resultPicturePath != null  and resultPicturePath != ''  ">#{resultPicturePath},</if>
+            <if test="experience        != null  and experience        != ''  ">#{experience},</if>
+            <if test="skill             != null  and skill             != ''  ">#{skill},</if>
+            <if test="cookingTime       != null  and cookingTime       != ''  ">#{cookingTime},</if>
+            <if test="cookingTimeShow   != null  and cookingTimeShow   != ''  ">#{cookingTimeShow},</if>
+            <if test="flavor            != null  and flavor            != ''  ">#{flavor},</if>
+            <if test="flavorShow        != null  and flavorShow        != ''  ">#{flavorShow},</if>
+            <if test="difficulty        != null  and difficulty        != ''  ">#{difficulty},</if>
+            <if test="difficultyShow    != null  and difficultyShow    != ''  ">#{difficultyShow},</if>
+            <if test="stateType         != null  and stateType         != ''  ">#{stateType},</if>
+        </trim>
+    </insert>
+
+    <select id="selectTeachingMaterials" resultMap="ydTeachingMaterialsResult">
+        select id,tc_id,material,`number` from yd_teaching_materials where tc_id=#{id} and `type`=#{type} and `status` >-1
+    </select>
+
+    <select id="selectTeachingStep" resultMap="ydTeachingStepResult">
+        select id,tc_id,picture_path,explanatory_text from yd_teaching_step where tc_id=#{id} and `status` >-1 order by step
+    </select>
+
+    <delete id="deleteTeachingInfo">
+        delete from yd_teaching_content where id = #{id}
+    </delete>
+
+    <delete id="deleteTeachingMaterialsInfo">
+        delete from yd_teaching_materials where tc_id = #{id}
+    </delete>
+
+    <delete id="deleteTeachingStepsInfo">
+        delete from yd_teaching_step where tc_id = #{id}
+    </delete>
+
+    <update id="updateReleaseType">
+        update yd_teaching_content set state_type=2 where id=#{id}
+    </update>
+
+    <update id="updateForwardNum">
+        update yd_teaching_content set forward_num=forward_num+1 where id=#{id}
+    </update>
+
+    <update id="insertBrowseNum">
+         update yd_teaching_content set browse_num=browse_num+1 where id=#{id}
+    </update>
+
+    <update id="updateCollectionNum" parameterType="YdTeachingContent">
+         update yd_teaching_content set collection_num=collection_num+#{collectionNum} where id=#{id}
+    </update>
+
+    <update id="updateHeatNum"  parameterType="YdTeachingContent">
+         update yd_teaching_content set heat_num=heat_num+#{heatNum} where id=#{id}
+    </update>
+
+    <update id="updateCommentNum" parameterType="YdTeachingContent">
+        update yd_teaching_content set comment_num=comment_num+#{commentNum} where id=#{id}
+    </update>
+
+</mapper>

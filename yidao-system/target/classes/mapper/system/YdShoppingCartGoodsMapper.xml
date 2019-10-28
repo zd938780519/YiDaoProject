@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdShoppingCartGoodsMapper">
+
+    <resultMap id="YdShopResult" type="com.ruoyi.system.domain.YdShop">
+        <id     property="id" column="sid" />
+        <result property="name"        column="sname"/>
+        <result property="postalQuota"        column="postal_quota"/>
+
+        <collection property="scGoods" ofType="com.ruoyi.system.domain.YdShoppingCartGoods" column="shop_id">
+            <id     property="id" column="sbg_id" />
+            <result property="basketId"        column="basket_id"/>
+            <result property="shopId"        column="shop_id"/>
+            <result property="goodsId"        column="goods_id"/>
+            <result property="sgpId"        column="sgp_id"/>
+            <result property="orderCount"        column="order_count"/>
+            <result property="isAllowCoupon"        column="is_allow_coupon"/>
+            <result property="isFixedMoneyAndIntegral"        column="is_fixed_money_and_integral"/>
+            <result property="isPureIntegral"        column="is_pure_integral"/>
+            <result property="createTime"     column="create_time"     />
+            <result property="updateTime"     column="update_time"     />
+            <result property="status"          column="status"          />
+            <result property="other1"          column="other1"          />
+            <result property="other2"          column="other2"          />
+
+            <result property="sname"        column="sname"/>
+            <result property="gname"          column="gname"          />
+            <result property="originalPrice"          column="original_price"          />
+            <result property="discount"          column="discount"          />
+            <result property="salePrice"          column="sale_price"          />
+            <result property="integralLimit"          column="integral_limit"          />
+            <result property="integralPrice"          column="integral_price"          />
+            <result property="photoPath"          column="photo_path"          />
+            <result property="parameterType"          column="parameter_type"          />
+            <result property="parameter"          column="parameter"          />
+            <result property="storedCount"          column="stored_count"          />
+            <result property="isFreeShipping"          column="is_Free_Shipping"          />
+            <result property="firstPostage"          column="first_postage"          />
+            <result property="additionalPostage"          column="additional_postage"          />
+
+            <result property="integralPaymentPrice"        column="integral_payment_price"     />
+            <result property="giveIntegralPrice"        column="give_integral_price"     />
+        </collection>
+    </resultMap>
+
+    <select id="selectShoppingCartGoods" parameterType="long" resultMap="YdShopResult">
+        select s.id sid, s.name sname,s.postal_quota,sg.is_fixed_money_and_integral,sg.is_pure_integral,sg.name gname,
+                sg.original_price,sg.discount,sg.sale_price,sg.integral_limit,sg.integral_price,sg.parameter_type,sg.is_free_shipping,
+                sbg.order_count,sbg.id sbg_id,sbg.basket_id,sbg.shop_id,sbg.goods_id,sbg.sgp_id,sgp.photo_path,sgp.parameter
+        from yd_shop s
+        inner join yd_shop_basket_goods sbg on sbg.shop_id=s.id
+        inner join yd_shop_goods sg on sg.id=sbg.goods_id
+        inner join yd_shop_goods_parameter sgp on sgp.id=sbg.sgp_id
+        where sbg.status>=0 and s.status>-1 and sg.status>-1 and sbg.basket_id=#{basketId}
+    </select>
+
+    <insert id="insertShoppingCartGoods"  parameterType="YdShoppingCartGoods" useGeneratedKeys="true" keyProperty="id">
+        insert into yd_shop_basket_goods (basket_id,shop_id,goods_id,sgp_Id,order_time,order_count)
+        values(#{basketId},#{shopId},#{goodsId},#{sgpId},now(),#{orderCount})
+    </insert>
+
+    <update id="updateShoppingCartGoodsOrderCount" parameterType="YdShoppingCartGoods">
+        update yd_shop_basket_goods set order_count=order_count+#{orderCount} where id=#{id}
+    </update>
+
+    <update id="updateShoppingCartGoodsCoverOrderCount" parameterType="YdShoppingCartGoods">
+        update yd_shop_basket_goods set order_count=#{orderCount} where id=#{id}
+    </update>
+
+    <delete id="deleteShoppingCartGoods">
+        delete from yd_shop_basket_goods where id=#{id}
+    </delete>
+
+    <delete id="deleteSomeShoppingCartGoods">
+        delete from yd_shop_basket_goods where id in
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            ${id}
+        </foreach>
+    </delete>
+    
+    <update id="logicalDeleteSomeShoppingCartGoods">
+        update  yd_shop_basket_goods set status = -1 where id in
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            ${id}
+        </foreach>
+    </update>
+
+    <select id="selectShoppingCartGoodsByUserIdAndGoodsIdAndShopGoodsParameterId" resultType="YdShoppingCartGoods">
+        select * from yd_shop_basket_goods sbg
+        inner join yd_shop_basket sb on sbg.basket_id=sb.id
+        where sbg.`status`>-1 and sb.`status`>-1 and user_id=#{userId} and goods_id=#{goodsId} and sgp_id=#{sgpId}
+    </select>
+
+    <select id="selectShoppingCartGoodsByBasketIdAndGoodsIdAndShopGoodsParameterId" resultType="YdShoppingCartGoods">
+        select * from yd_shop_basket_goods
+        where `status`>-1 and basket_Id=#{basketId} and goods_id=#{goodsId} and sgp_id=#{sgpId}
+    </select>
+
+    <update id="updateShoppingCartGoodsParameter" parameterType="YdShoppingCartGoods">
+        update yd_shop_basket_goods set sgp_id=#{sgpId} where id=#{id}
+    </update>
+
+    <select id="selectGoodsByIds" parameterType="long" resultMap="YdShopResult">
+        select s.id sid, s.name sname,s.postal_quota,sg.is_allow_coupon,sg.is_fixed_money_and_integral,sg.is_pure_integral,sg.name gname,
+                sg.original_price,sg.discount,sg.sale_price,sg.integral_limit,sg.integral_price,sg.parameter_type,sg.integral_payment_price,
+                sg.give_integral_price,sg.first_postage,sg.additional_postage,sg.is_free_shipping,
+                sbg.order_count,sbg.id sbg_id,sbg.basket_id,sbg.shop_id,sbg.goods_id,sbg.sgp_id,sgp.photo_path,sgp.parameter,sgp.stored_count,sgp.id sgp_id
+        from yd_shop s
+        inner join yd_shop_basket_goods sbg on sbg.shop_id=s.id
+        inner join yd_shop_goods sg on sg.id=sbg.goods_id
+        inner join yd_shop_goods_parameter sgp on sgp.id=sbg.sgp_id
+        where s.status>-1 and sg.status>-1 and sbg.id in
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            ${id}
+        </foreach>
+    </select>
+
+    <delete id="deleteCartGoodsByOrderId">
+        delete from yd_shop_basket_goods where id in (
+            select sbg_id from yd_shop_order_goods where so_id=#{orderId}
+        )
+    </delete>
+
+
+</mapper>

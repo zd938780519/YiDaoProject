@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <th:block th:include="include :: header('上架')" />
+    <link th:href="@{/css/fileinput.min.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="form-content">
+    <form id="form-user-add" class="form-horizontal">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label"><span style="color: red; ">*</span>商品名称：</label>
+                    <div class="col-sm-8">
+                        <input name="name" placeholder="请输入商品名称" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label"><span style="color: red; ">*</span>商品类型：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group" style="width: 100%">
+                            <select name="typeShow" class="form-control m-b" th:with="type=${@dict.getType('yd_shop_good_type')}">
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label"><span style="color: red; ">*</span>简介：</label>
+                    <div class="col-sm-8">
+                        <input name="brief" placeholder="请输入简介" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label"><span style="color: red; ">*</span>原价：</label>
+                    <div class="col-sm-8">
+                        <input name="originalPrice" class="form-control" type="text" placeholder="请输入原价">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">折扣：</label>
+                    <div class="col-sm-8">
+                        <input name="discount" placeholder="请输入折扣" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label"><span style="color: red; ">*</span>售价：</label>
+                    <div class="col-sm-8">
+                        <input name="salePrice" placeholder="请输入售价" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">积分限额：</label>
+                    <div class="col-sm-8">
+                        <input name="integralLimit" placeholder="请输入积分限额" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label"><span style="color: red; ">*</span>进价：</label>
+                    <div class="col-sm-8">
+                        <input name="storePrice" placeholder="请输入进价" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label"><span style="color: red; ">*</span>是否包邮：</label>
+                    <div class="col-sm-8">
+                        <label class="toggle-switch switch-solid">
+                            <input type="checkbox" id="isFreeShipping" checked>
+                            <span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">库存量：</label>
+                    <div class="col-sm-8">
+                        <input name="storedCount" placeholder="请输入库存量" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label"><span style="color: red; ">*</span>生产厂家：</label>
+                    <div class="col-sm-8">
+                        <input name="producer" placeholder="请输入生产厂家" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label"><span style="color: red; ">*</span>参数：</label>
+                    <div class="col-sm-8">
+                        <input name="parameter" placeholder="请输入参数" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label"><span style="color: red; ">*</span>展示图片：</label>
+                    <div class="col-sm-10">
+                        <input type="file" name="file" id="txt_file" class="file-loading" />
+                        <input type="hidden" id="filePath"/>
+                        <input type="hidden" id="fileName"/>
+                        <input type="hidden" id="fileIndex"/>
+                        <input type="hidden" id="removeIndex"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script th:src="@{/js/fileinput.js}" ></script>
+<script th:src="@{/js/zh.js}" ></script>
+
+<script th:inline="javascript">
+    var shopId=1;//系统店铺id为1
+    var prefix = ctx + "yd/backstage/shopping/goods";
+    $(function() {
+        //0.初始化fileinput
+        var oFileInput = new FileInput();
+         oFileInput.Init("txt_file", prefix+"/imageUpload");
+    });
+
+    var fileIndex=0;
+    //初始化fileinput
+    var FileInput = function () {
+        var oFile = new Object();
+
+        //初始化fileinput控件（第一次初始化）
+        oFile.Init = function(ctrlName, uploadUrl) {
+            var control = $('#' + ctrlName);
+
+            //初始化上传控件的样式
+            control.fileinput({
+                language: 'zh', //设置语言
+                uploadUrl: uploadUrl, //上传的地址
+                allowedFileExtensions: ['jpg', 'gif', 'png'],//接收的文件后缀
+                showUpload: true, //是否显示上传按钮
+                showCaption: false,//是否显示标题
+                showRemove:false,//是否显示移除按钮
+                showClose:false,//是否显示右上角的X
+                dropZoneTitle: '拖拽文件到这里 &hellip;',
+                layoutTemplates:{
+                    actionUpload:''    //设置为空可去掉上传按钮
+                },
+                browseClass: "btn btn-primary", //按钮样式
+                maxFileCount: 1, //表示允许同时上传的最大文件个数
+                autoReplace: true,//是否自动替换当前图片
+                enctype: 'multipart/form-data',
+                validateInitialCount:true,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+                deleteExtraData:function(){//删除图片时向后台传递的参数
+                    var data={
+                    };
+                    return data;
+                },
+                uploadExtraData:function(){//向后台传递参数
+                    var data={
+                    };
+                    return data;
+                }
+            }).on('filepreupload', function(event, data, previewId, index) {     //上传中
+                console.log('文件正在上传');
+            }).on("fileuploaded", function (event, data, previewId, index) {    //一个文件上传成功
+                console.log('文件上传成功！');
+                if(data.response['result'] === "success"){
+                    var filePath = data.response['filePath'];
+                    var fileName = data.response['fileName'];
+                    var oldFileName = $("#fileName").val();
+                    removeFile(oldFileName);
+                    $("#filePath").val(filePath);
+                    $("#fileName").val(fileName);
+                    $("#fileIndex").val(fileIndex);
+                    var fileIndexInput = document.createElement("input");
+                    fileIndexInput.type="hidden";
+                    fileIndexInput.className="fileIndex";
+                    fileIndexInput.value=fileIndex+"";
+                    var rIndex=fileIndex;
+                    $(".file-preview-success")[$(".file-preview-success").length-1].append(fileIndexInput);
+                    $($(".file-preview-success")[$(".file-preview-success").length-1]).find(".kv-file-remove").on("click",function(){
+                        $("#removeIndex").val(rIndex);
+                    });
+                    fileIndex+=1;
+                }else{
+                    return false;
+                }
+            }).on('fileerror', function(event, data, msg) {  //一个文件上传失败
+                console.log('文件上传失败！');
+            }).on('filesuccessremove', function(event, id) {
+                //上传成功后点击缩略图上的删除按钮
+                var oldFileName = $("#fileName").val();
+                if($("#fileIndex").val() == $("#removeIndex").val()){//判断是否是点击的最后一个图片
+                    removeFile(oldFileName);
+                    $("#filePath").val("");
+                    $("#fileName").val("");
+                }
+                console.log('文件删除');
+            });
+        }
+        return oFile;
+    };
+
+    /**
+     *删除已上传到服务器的文件
+     * @param fileName
+     */
+    function removeFile(fileName) {
+        $.ajax({
+            type: "POST",
+            url:  prefix + "/removeFile",
+            data: {"fileName": fileName},
+            dataType: "json",
+            success: function(data){
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

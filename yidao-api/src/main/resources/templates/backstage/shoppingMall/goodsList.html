@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('商品列表')" />
+</head>
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="ordinary-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								商户名：<input type="text" name="name"/>
+								<input type="hidden" name="shopId" value="1" />
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			<div class="btn-group-sm" id="toolbar" role="group">
+				<a class="btn btn-primary" id="upperShelf">
+					<i class="fa fa-plus"></i> 上架
+				</a>
+			</div>
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+		</div>
+	</div>
+	<div th:include="include :: footer"></div>
+	<script th:inline="javascript">
+		var shopId=1;//系统店铺id为1
+		var prefix = ctx + "yd/backstage/shopping/goods";
+		var datas = [[${@dict.getType('yd_is_free_shipping')}]];
+		var typeShowDatas = [[${@dict.getType('yd_shop_good_type')}]];
+		$(function() {
+			var options = {
+				url: prefix + "/list",
+				showFooter: true,
+				showSearch: false,
+				showRefresh: false,
+				showToggle: false,
+				showColumns: false,
+				//params:[{"id":1}],
+				queryParams :queryParams,
+				columns: [
+					{
+						title : '编号',
+						formatter: function(value, row, index) {
+							return index+1;
+						}
+					},
+					{
+						field : 'id',
+						title : 'id'
+					},
+					{
+						field : 'shopName',
+						title : '店铺名'
+					},
+					{
+						field : 'name',
+						title : '商品名'
+					},
+					{
+						field : 'typeShow',
+						title : '商品类型'
+					},
+					{
+						field : 'brief',
+						title : '简介'
+					},
+					{
+						field : 'originalPrice',
+						title : '原价'
+					},
+					{
+						field : 'discount',
+						title : '折扣'
+					},
+					{
+						field : 'salePrice',
+						title : '售价'
+					},
+					{
+						field : 'integralLimit',
+						title : '积分限额'
+					},
+					{
+						field : 'storePrice',
+						title : '进价'
+					},
+					{
+						field : 'sellCountMonth',
+						title : '月销量'
+					},
+					{
+						field: 'isFreeShipping',
+						title: '是否包邮',
+						formatter: function(value, row, index) {
+							return $.table.selectDictLabel(datas, value);
+						}
+					},
+					{
+						field : 'createTime',
+						title : '上架时间'
+					},
+					{
+						field : 'storedCount',
+						title : '库存量'
+					},
+					{
+						field : 'producer',
+						title : '生产厂家'
+					},
+					{
+						field : 'parameter',
+						title : '参数'
+					},
+					/*{
+						field : 'packageType',
+						title : '包装类型'
+					},*/
+					{
+						title: '图片',
+						formatter: function(value, row, index) {
+							//TODO 以后要换成我们自己的服务器地址
+							return $.table.imageView(row.photoPath, 'https://yd-2019-test.oss-cn-shanghai.aliyuncs.com/');
+						}
+					},
+					{
+						title: '操作',
+						align: 'center',
+						formatter: function(value, row, index) {
+							var actions = [];
+							actions.push('<a class="btn btn-warning btn-xs" href="#" onclick="lowerShelf('+row.id+')"><i class="fa fa-exclamation-triangle"></i> 下架</a> ');
+							actions.push('<a class="btn btn-success btn-xs" href="#" onclick="revise(this,'+row.id+')"><i class="fa fa-edit"></i> 修改</a> ');
+							return actions.join('');
+						}
+					}]
+			};
+			$.table.init(options);
+		});
+
+		//得到查询的参数
+		//借用实体将店铺id传到后台，系统店铺默认id=1
+		function queryParams(params) {
+			//这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+			var model = $.table.queryParams(params);
+			model.shopId = shopId;
+			return model;
+		}
+
+		function lowerShelf(id) {
+			$.modal.confirm("确定要下架吗？",function () {
+				$.ajax({
+					type: "POST",
+					url:  prefix + "/lowerShelf",
+					data: {"id":id},
+					dataType: "json",
+					success: function(data){
+						var status = data.status;
+						if(status == 1 || status == "1"){
+							$.modal.msgSuccess("下架成功！");
+							$.table.refresh();
+						}else if(status == -1 || status == "-1"){
+							$.modal.msgError("下架失败：");
+						}
+					}
+				});
+			});
+		}
+
+		function revise(obj,id) {
+			var o = $(obj);
+			var name = o.parent().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().text();
+			var typeShow = o.parent().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().text();
+			var brief = o.parent().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().text();
+			var originalPrice = o.parent().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().text();
+			var discount = o.parent().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().text();
+			var salePrice = o.parent().prev().prev().prev().prev().prev().prev().prev().prev().prev().prev().text();
+			var integralLimit =  o.parent().prev().prev().prev().prev().prev().prev().prev().prev().prev().text();
+			var storePrice =  o.parent().prev().prev().prev().prev().prev().prev().prev().prev().text();
+			var isFreeShipping = o.parent().prev().prev().prev().prev().prev().prev().find("span").text() == "包邮"?"1":"0";
+			var storedCount = o.parent().prev().prev().prev().prev().text();
+			var producer = o.parent().prev().prev().prev().text();
+			var parameter = o.parent().prev().prev().text();
+			var typeVal=0;
+			for (var i=0;i<typeShowDatas.length;i++) {
+				var dictLabel = typeShowDatas[i].dictLabel;
+				var dictValue = typeShowDatas[i].dictValue;
+				if(typeShow == dictLabel){
+					typeVal = dictValue;
+				}
+			}
+			$.modal.open('修改', prefix + "/updateUpperShelfForm?id="+id+"&name="+name+"&typeShow="+typeVal+"&brief="+brief
+					+"&originalPrice="+originalPrice+"&discount="+discount+"&salePrice="+salePrice+"&integralLimit="+integralLimit
+					+"&storePrice="+storePrice+"&isFreeShipping="+isFreeShipping+"&storedCount="+storedCount+"&producer="+producer
+					+"&parameter="+parameter, '900', '500', callbackRevise);
+		}
+
+		$("#upperShelf").click(function(){
+			$.modal.open('上架', prefix + "/upperShelfForm", '900', '500', callback);
+		});
+
+		function callback(index, layero) {
+			var flag = true;
+			var iframe = $(layero).find("iframe").contents();
+			var name = iframe.find("input[name=\"name\"]").val();
+			var typeShow = iframe.find("select[name=\"typeShow\"]").val();
+			var brief = iframe.find("input[name=\"brief\"]").val();
+			var originalPrice = iframe.find("input[name=\"originalPrice\"]").val();
+			var discount = iframe.find("input[name=\"discount\"]").val();
+			var salePrice = iframe.find("input[name=\"salePrice\"]").val();
+			var integralLimit = iframe.find("input[name=\"integralLimit\"]").val();
+			var storePrice = iframe.find("input[name=\"storePrice\"]").val();
+			var isFreeShipping = iframe.find("#isFreeShipping").is(':checked')+"";
+			var storedCount = iframe.find("input[name=\"storedCount\"]").val();
+			var producer = iframe.find("input[name=\"producer\"]").val();
+			var parameter = iframe.find("input[name=\"parameter\"]").val();
+			var filePath = iframe.find("#filePath").val();
+
+			var msg="";
+			if(name.length==0){
+				flag = false;
+				msg+="商品名不能为空！<br/>";
+			}else if(name.length>50){
+				flag = false;
+				msg+="商品名不能超过50个字！<br/>";
+			}
+			if(brief.length==0){
+				flag = false;
+				msg+="简介不能为空！<br/>";
+			}else if(brief.length>400){
+				flag = false;
+				msg+="简介不能超过400个字！<br/>";
+			}
+			if(originalPrice.length==0){
+				flag = false;
+				msg+="原价不能为空！<br/>";
+			}else if(!validationNumber(originalPrice,2)){
+				flag = false;
+				msg+="原价必须为两位以内小数！<br/>";
+			}else if(originalPrice>99999.99){
+				flag = false;
+				msg+="原价目前最大为99999.99，如果有需要调整，请联系管理员！<br/>";
+			}
+			if(discount.length == 0){
+				discount=1;
+			}else{
+				if(isNaN(discount)){
+					flag = false;
+					msg+="折扣必须为数字！<br/>";
+				}else{
+					if(discount>1 || discount<0){
+						flag = false;
+						msg+="折扣的格式为1、0.99、0.98……不填默认为1（原价）！<br/>";
+					}
+				}
+			}
+			if(salePrice.length==0){
+				flag = false;
+				msg+="售价不能为空！<br/>";
+			}else if(!validationNumber(salePrice,2)){
+				flag = false;
+				msg+="售价必须为两位以内小数！<br/>";
+			}else if(salePrice>99999.99){
+				flag = false;
+				msg+="售价目前最大为99999.99，如果有需要调整，请联系管理员！<br/>";
+			}
+			if(integralLimit.length==0){
+				integralLimit = 0;
+			}else if(!validationNumber(integralLimit,2)){
+				flag = false;
+				msg+="积分限额必须为两位以内小数！<br/>";
+			}else if(integralLimit>99999.99){
+				flag = false;
+				msg+="积分限额目前最大为99999.99，如果有需要调整，请联系管理员！<br/>";
+			}
+			if(storePrice.length==0){
+				flag = false;
+				msg+="进价不能为空！<br/>";
+			}else if(!validationNumber(storePrice,2)){
+				flag = false;
+				msg+="进价必须为两位以内小数！<br/>";
+			}else if(storePrice>99999.99){
+				flag = false;
+				msg+="进价目前最大为99999.99，如果有需要调整，请联系管理员！<br/>";
+			}
+			if(storedCount.length==0){
+				storedCount = 0;
+			}else if(!validationNumber(storedCount,0)){
+				flag = false;
+				msg+="库存量必须为整数！<br/>";
+			}else if(storedCount>99999){
+				flag = false;
+				msg+="库存量目前最大为99999，如果有需要调整，请联系管理员！<br/>";
+			}
+			if(producer.length==0){
+				flag = false;
+				msg+="生产厂家不能为空！<br/>";
+			}else if(producer.length>50){
+				flag = false;
+				msg+="生产厂家不能超过50个字！<br/>";
+			}
+			if(parameter.length==0){
+				flag = false;
+				msg+="参数不能为空！<br/>";
+			}else if(parameter.length>500){
+				flag = false;
+				msg+="参数不能超过500个字！<br/>";
+			}
+			if(filePath.length==0){
+				flag = false;
+				msg+="图片不能为空！<br/>";
+			}
+			if(msg.length>0){
+				$.modal.msgError(msg);
+			}
+			if(flag){
+				$.ajax({
+					type: "POST",
+					url:  prefix + "/addGoods",
+					data: {"shopId":shopId,"name":name,"typeShow":typeShow,"brief":brief,"originalPrice":originalPrice,"discount":discount,
+						"salePrice":salePrice,"integralLimit":integralLimit,"storePrice":storePrice,"isFreeShipping":isFreeShipping,
+						"storedCount":storedCount,"producer":producer,"parameter":parameter,"filePath":filePath},
+					dataType: "json",
+					success: function(data){
+						var status = data.status;
+						if(status == 1 || status == "1"){
+							layer.close(index);
+							$.modal.msgSuccess("上架成功！");
+							$.table.refresh();
+						}else if(status == -1 || status == "-1"){
+							$.modal.msgError("上架失败："+data.msg);
+						}
+					}
+				});
+			}
+		}
+
+		/**
+		 * 判断是否满足小数位数要求
+		 * @param e
+		 * @param num
+		 * @returns {boolean}
+		 */
+		function validationNumber(e, num) {
+			if (e != "") {
+				if(!isNaN(e)){
+					if (e.indexOf('.') > -1) {
+						if (e.split('.')[1].length > num) {
+							return false;
+						}else{
+							return true;
+						}
+					}else{
+						return true;
+					}
+				}else{
+					return false;
+				}
+			}else{
+				return false;
+			}
+		}
+
+		function callbackRevise(index, layero) {
+			var flag = true;
+			var iframe = $(layero).find("iframe").contents();
+			var id = iframe.find("input[name=\"id\"]").val();
+			var name = iframe.find("input[name=\"name\"]").val();
+			var typeShow = iframe.find("select[name=\"typeShow\"]").val();
+			var brief = iframe.find("input[name=\"brief\"]").val();
+			var originalPrice = iframe.find("input[name=\"originalPrice\"]").val();
+			var discount = iframe.find("input[name=\"discount\"]").val();
+			var salePrice = iframe.find("input[name=\"salePrice\"]").val();
+			var integralLimit = iframe.find("input[name=\"integralLimit\"]").val();
+			var storePrice = iframe.find("input[name=\"storePrice\"]").val();
+			var text = iframe.find("input:checkbox[name='isFreeShipping']:checked").map(function(index,elem) {
+				return $(elem).val();
+			}).get().join(',');
+			var isFreeShipping = text == "on"?"true":"false";
+			var storedCount = iframe.find("input[name=\"storedCount\"]").val();
+			var producer = iframe.find("input[name=\"producer\"]").val();
+			var parameter = iframe.find("input[name=\"parameter\"]").val();
+			var filePath = iframe.find("#filePath").val();
+			var oldFileName = iframe.find("#oldFileName").val();
+			var oldFilePath = iframe.find("#oldFilePath").val();
+
+			var msg="";
+			if(name.length==0){
+				flag = false;
+				msg+="商品名不能为空！<br/>";
+			}else if(name.length>50){
+				flag = false;
+				msg+="商品名不能超过50个字！<br/>";
+			}
+			if(brief.length==0){
+				flag = false;
+				msg+="简介不能为空！<br/>";
+			}else if(brief.length>400){
+				flag = false;
+				msg+="简介不能超过400个字！<br/>";
+			}
+			if(originalPrice.length==0){
+				flag = false;
+				msg+="原价不能为空！<br/>";
+			}else if(!validationNumber(originalPrice,2)){
+				flag = false;
+				msg+="原价必须为两位以内小数！<br/>";
+			}else if(originalPrice>99999.99){
+				flag = false;
+				msg+="原价目前最大为99999.99，如果有需要调整，请联系管理员！<br/>";
+			}
+			if(discount.length == 0){
+				discount=1;
+			}else{
+				if(isNaN(discount)){
+					flag = false;
+					msg+="折扣必须为数字！<br/>";
+				}else{
+					if(discount>1 || discount<0){
+						flag = false;
+						msg+="折扣的格式为1、0.99、0.98……不填默认为1（原价）！<br/>";
+					}
+				}
+			}
+			if(salePrice.length==0){
+				flag = false;
+				msg+="售价不能为空！<br/>";
+			}else if(!validationNumber(salePrice,2)){
+				flag = false;
+				msg+="售价必须为两位以内小数！<br/>";
+			}else if(salePrice>99999.99){
+				flag = false;
+				msg+="售价目前最大为99999.99，如果有需要调整，请联系管理员！<br/>";
+			}
+			if(integralLimit.length==0){
+				integralLimit = 0;
+			}else if(!validationNumber(integralLimit,2)){
+				flag = false;
+				msg+="积分限额必须为两位以内小数！<br/>";
+			}else if(integralLimit>99999.99){
+				flag = false;
+				msg+="积分限额目前最大为99999.99，如果有需要调整，请联系管理员！<br/>";
+			}
+			if(storePrice.length==0){
+				flag = false;
+				msg+="进价不能为空！<br/>";
+			}else if(!validationNumber(storePrice,2)){
+				flag = false;
+				msg+="进价必须为两位以内小数！<br/>";
+			}else if(storePrice>99999.99){
+				flag = false;
+				msg+="进价目前最大为99999.99，如果有需要调整，请联系管理员！<br/>";
+			}
+			if(storedCount.length==0){
+				storedCount = 0;
+			}else if(!validationNumber(storedCount,0)){
+				flag = false;
+				msg+="库存量必须为整数！<br/>";
+			}else if(storedCount>99999){
+				flag = false;
+				msg+="库存量目前最大为99999，如果有需要调整，请联系管理员！<br/>";
+			}
+			if(producer.length==0){
+				flag = false;
+				msg+="生产厂家不能为空！<br/>";
+			}else if(producer.length>50){
+				flag = false;
+				msg+="生产厂家不能超过50个字！<br/>";
+			}
+			if(parameter.length==0){
+				flag = false;
+				msg+="参数不能为空！<br/>";
+			}else if(parameter.length>500){
+				flag = false;
+				msg+="参数不能超过500个字！<br/>";
+			}
+			if(filePath.length==0){
+				filePath=oldFilePath;
+			}else if(filePath!=oldFilePath){
+				removeFile(oldFileName);
+			}
+			if(msg.length>0){
+				$.modal.msgError(msg);
+			}
+
+			if(flag){
+				$.ajax({
+					type: "POST",
+					url:  prefix + "/updateGoods",
+					data: {"id":id,"name":name,"typeShow":typeShow,"brief":brief,"originalPrice":originalPrice,"discount":discount,
+						"salePrice":salePrice,"integralLimit":integralLimit,"storePrice":storePrice,"isFreeShipping":isFreeShipping,
+						"storedCount":storedCount,"producer":producer,"parameter":parameter,"filePath":filePath},
+					dataType: "json",
+					success: function(data){
+						var status = data.status;
+						if(status == 1 || status == "1"){
+							layer.close(index);
+							$.modal.msgSuccess("修改成功！");
+							$.table.refresh();
+						}else if(status == -1 || status == "-1"){
+							$.modal.msgError("修改失败："+data.msg);
+						}
+					}
+				});
+			}
+		}
+
+		/**
+		 *删除已上传到服务器的文件
+		 * @param fileName
+		 */
+		function removeFile(fileName) {
+			$.ajax({
+				type: "POST",
+				url:  prefix + "/removeFile",
+				data: {"fileName": fileName},
+				dataType: "json",
+				success: function(data){
+				}
+			});
+		}
+	</script>
+</body>
+</html>

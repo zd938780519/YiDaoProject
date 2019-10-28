@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdFlagMapper">
+    <!-- 订单尾号，0000-9999循环 -->
+    <select id="findFlag" resultType="java.lang.Integer" useCache="false" statementType="CALLABLE">
+        call flag_control();
+    </select>
+</mapper>

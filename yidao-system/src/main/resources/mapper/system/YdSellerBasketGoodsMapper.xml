@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.YdSellerBasketGoodsMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.system.domain.YdSellerBasketGoods">
+      <id column="id" property="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="basket_id" property="basketId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="shop_id" property="shopId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="goods_id" property="goodsId" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="order_time" property="orderTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="order_count" property="orderCount" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="order_price" property="orderPrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="order_sale_price" property="orderSalePrice" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <result column="create_time" property="createTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="update_time" property="updateTime" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <result column="status" property="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <result column="other1" property="other1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <result column="other2" property="other2" javaType="java.lang.String" jdbcType="VARCHAR" />
+  </resultMap>
+
+   <!--根据购物车id和商品id查询购物子表信息-->
+   <select id="getBasketGoodByBasketIdAndGoodId" parameterType="java.util.Map" resultMap="BaseResultMap">
+       select id, basket_id, shop_id, goods_id, order_time, order_count, order_price, order_sale_price,
+            create_time, update_time, `status`, other1, other2
+       from yd_seller_basket_goods
+       where basket_id = #{basketId}
+       and goods_id = #{goodId}
+   </select>
+
+  <insert id="insert" parameterType="com.ruoyi.system.domain.YdSellerBasketGoods">
+    insert into yd_seller_basket_goods (basket_id, shop_id,
+      goods_id, order_time, order_count, 
+      order_price, order_sale_price)
+    values (#{basketId,jdbcType=INTEGER}, #{shopId,jdbcType=INTEGER},
+      #{goodsId,jdbcType=INTEGER}, #{orderTime,jdbcType=TIMESTAMP}, #{orderCount,jdbcType=INTEGER}, 
+      #{orderPrice,jdbcType=DECIMAL}, #{orderSalePrice,jdbcType=DECIMAL})
+  </insert>
+
+  <update id="update" parameterType="com.ruoyi.system.domain.YdSellerBasketGoods">
+      update yd_seller_basket_goods
+      SET order_time = #{orderTime},order_count = #{orderCount}
+      where id = #{id}
+  </update>
+
+  <delete id="delete" parameterType="java.lang.Integer">
+     DELETE FROM yd_seller_basket_goods
+     where id = #{id}
+  </delete>
+
+  <delete id="deleteAll" parameterType="java.lang.Integer">
+     DELETE FROM yd_seller_basket_goods
+     where basket_id = #{basketId}
+  </delete>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, basket_id, shop_id, goods_id, order_time, order_count, order_price, order_sale_price, 
+    create_time, update_time, `status`, other1, other2
+    from yd_seller_basket_goods
+  </select>
+</mapper>
